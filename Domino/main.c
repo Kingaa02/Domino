@@ -147,7 +147,7 @@ struct Tile {
 };
 
 
-//losowanie liczby oczek klocka startowego
+//losowanie liczby oczek klocka startowegoa
 void get_start_piece(struct Tile* tile) {
 	srand(time(0));
 
