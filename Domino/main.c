@@ -17,6 +17,7 @@ struct Tile {
 	int p_x, p_y;
 	int l_x, l_y;
 	int ilosc_oczek_lewo, ilosc_oczek_prawo;
+	float rotation_degree;
 	ALLEGRO_BITMAP* lewo;
 	ALLEGRO_BITMAP* prawo;
 
@@ -44,7 +45,7 @@ void sprawdznie_init(bool test, char* opis)
 }
 
 
-
+/// Przypisywanie odpowiednich grafik dla ka¿dej ze stron bloku
 void przypisanie_grafik(Tile** tiles, int ilosc_domino) {
 
 	for (int i = 0; i < ilosc_domino; i++)
@@ -101,18 +102,29 @@ void przypisanie_grafik(Tile** tiles, int ilosc_domino) {
 
 }
 
-
+/// Wyœwietlanie domina na ekranie
 void wyswietlanie_domino(Tile** tiles, int ilosc_domino)
 {
 	for (int i = 0; i < ilosc_domino; i++)
 	{
-		al_draw_bitmap(tiles[i]->lewo, tiles[i]->l_x, tiles[i]->l_y, 0);
-		al_draw_bitmap(tiles[i]->prawo, tiles[i]->p_x, tiles[i]->p_y, 0);
+		if (i == 0)
+		{
+			al_draw_bitmap(tiles[i]->lewo, tiles[i]->l_x, tiles[i]->l_y,0);
+			al_draw_bitmap(tiles[i]->prawo, tiles[i]->p_x, tiles[i]->p_y,0);
+		}
+		else
+		{
+
+			al_draw_rotated_bitmap(tiles[i]->lewo, TILE_SIZE / 2, TILE_SIZE, tiles[i]->l_x + TILE_SIZE / 2, tiles[i]->p_y, tiles[i]->rotation_degree * 3.14159 / 180, 0);
+			al_draw_rotated_bitmap(tiles[i]->prawo, TILE_SIZE / 2, 0, tiles[i]->p_x + TILE_SIZE / 2, tiles[i]->p_y, tiles[i]->rotation_degree * 3.14159 / 180, 0);
+
+		}
+		
 	}
 }
 
-
-Tile* nowy(int l_x, int l_y, int p_x, int p_y)
+/// Tworzenie nowych bloków domina
+Tile* nowy(int l_x, int l_y, int p_x, int p_y, float rotation_degree)
 {
 	Tile* n = (Tile*)malloc(sizeof(Tile));
 	if (n)
@@ -121,11 +133,13 @@ Tile* nowy(int l_x, int l_y, int p_x, int p_y)
 		n->l_y = l_y;
 		n->p_x = p_x;
 		n->p_y = p_y;
+		n->rotation_degree = rotation_degree;
 		return n;
 	}
 	return NULL;
 }
 
+/// Powiêkszanie tablicy i dodawanie nowych domin do tablicy
 Tile** dodawanie_domina(Tile** tab, int index, Tile* domino, unsigned int* length)
 {
 	const unsigned int powiekszenie = 10;
@@ -141,7 +155,7 @@ Tile** dodawanie_domina(Tile** tab, int index, Tile* domino, unsigned int* lengt
 		tab[index] = domino;
 	return tab;
 }
-
+/// Wyœwietlanie zawartoœci tablicy z domino / Sprawdzanie wartoœci
 void print_array(Tile** array, const unsigned int number_of_values)
 {
 	if (array) {
@@ -207,21 +221,21 @@ int main()
 	srand(time(0));
 
 
-
+	///Tworzenie pocz¹tkowych domino
 	for (int i = 0; i < ilosc_domino; i++)
 	{
 		if (i == 0)
 		{
 			/// Œrodkowe domino
-			tiles = dodawanie_domina(tiles, i, nowy(SCREEN_WIDTH / 2 - TILE_SIZE, SCREEN_HEIGHT / 2 - TILE_SIZE / 2, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - TILE_SIZE / 2), &length);
+			tiles = dodawanie_domina(tiles, i, nowy(SCREEN_WIDTH / 2 - TILE_SIZE, SCREEN_HEIGHT / 2 - TILE_SIZE / 2, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - TILE_SIZE / 2,0	), &length);
 		}
 		else if (i == 1)
 		{
-			tiles = dodawanie_domina(tiles, i, nowy(start_x, y_pos, start_x, y2_pos), &length);
+			tiles = dodawanie_domina(tiles, i, nowy(start_x, y_pos, start_x, y2_pos,0), &length);
 		}
 		else
 		{
-			tiles = dodawanie_domina(tiles, i, nowy(tiles[i - 1]->l_x + 100, y_pos, tiles[i - 1]->p_x + 100, y2_pos), &length);
+			tiles = dodawanie_domina(tiles, i, nowy(tiles[i - 1]->l_x + 100, y_pos, tiles[i - 1]->p_x + 100, y2_pos,0), &length);
 		}
 
 	}
@@ -232,8 +246,13 @@ int main()
 
 
 
-	bool button_down = false;
+	bool mouse_button_down = false;
 	int mouse_x, mouse_y;
+
+
+	bool key_down = false;
+
+	float rotation_degree = 0;
 
 	al_start_timer(timer);
 	///Funkcja g³ówna
@@ -250,24 +269,30 @@ int main()
 		case ALLEGRO_EVENT_DISPLAY_CLOSE:
 			done = true;
 			break;
-
-
+			///Sprawdzenie czy wciœniêto przycis do oborotu bloku oraz ustawienie jego statusu
+		case ALLEGRO_EVENT_KEY_CHAR:
+			if (event.keyboard.keycode = ALLEGRO_KEY_R)
+			{
+				key_down = true;
+			}
+			break;
+			///Sprawdzenie czy wciœniêto przyscisk myszy
 		case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
 
 			if (event.mouse.button & 1)
 			{
-				button_down = true;
+				mouse_button_down = true;
 				mouse_x = event.mouse.x;
 				mouse_y = event.mouse.y;
 			}
 
 			break;
-
+			///Sprawdzenie czy przycisk myszy zosta³ puszczony
 		case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
 
 			if (event.mouse.button & 1)
 			{
-				button_down = false;
+				mouse_button_down = false;
 			}
 
 			break;
@@ -275,22 +300,66 @@ int main()
 		case ALLEGRO_EVENT_MOUSE_AXES:
 
 			//Przesuwanie bloków
-			if (button_down)
+			if (mouse_button_down)
 			{
 				for (int i = 1; i < ilosc_domino; i++)
 				{
-					if (event.mouse.x >= tiles[i]->l_x && event.mouse.x <= tiles[i]->p_x + TILE_SIZE)
-						if (event.mouse.y >= tiles[i]->l_y && event.mouse.y <= tiles[i]->p_y + TILE_SIZE)
-						{
-							tiles[i]->l_x = tiles[i]->l_x + event.mouse.x - mouse_x;
-							tiles[i]->l_y = tiles[i]->l_y + event.mouse.y - mouse_y;
 
-							tiles[i]->p_x = tiles[i]->p_x + event.mouse.x - mouse_x;
-							tiles[i]->p_y = tiles[i]->p_y + event.mouse.y - mouse_y;
 
-							mouse_x = event.mouse.x;
-							mouse_y = event.mouse.y;
-						}
+					if(tiles[i]->rotation_degree == 0 || tiles[i]->rotation_degree == 180 )
+					{
+						if (event.mouse.x >= tiles[i]->l_x && event.mouse.x <= tiles[i]->p_x + TILE_SIZE)
+							if (event.mouse.y >= tiles[i]->l_y && event.mouse.y <= tiles[i]->p_y + TILE_SIZE)
+							{
+								tiles[i]->l_x = tiles[i]->l_x + event.mouse.x - mouse_x;
+								tiles[i]->l_y = tiles[i]->l_y + event.mouse.y - mouse_y;
+
+								tiles[i]->p_x = tiles[i]->p_x + event.mouse.x - mouse_x;
+								tiles[i]->p_y = tiles[i]->p_y + event.mouse.y - mouse_y;
+
+								mouse_x = event.mouse.x;
+								mouse_y = event.mouse.y;
+
+
+								///Obracanie domino
+								if (key_down)
+								{
+									tiles[i]->rotation_degree +=90;
+									if (tiles[i]->rotation_degree >= 360)
+										tiles[i]->rotation_degree = 0;
+									key_down = false;
+								}
+								
+							}
+					}
+					else
+					{
+						if(event.mouse.x >= tiles[i]->l_x - 30 && event.mouse.x <= tiles[i]->p_x + 90)
+							if (event.mouse.y >= tiles[i]->l_y + 30 && event.mouse.y <= tiles[i]->p_y + 30)
+							{
+								tiles[i]->l_x = tiles[i]->l_x + event.mouse.x - mouse_x;
+								tiles[i]->l_y = tiles[i]->l_y + event.mouse.y - mouse_y;
+
+								tiles[i]->p_x = tiles[i]->p_x + event.mouse.x - mouse_x;
+								tiles[i]->p_y = tiles[i]->p_y + event.mouse.y - mouse_y;
+
+								mouse_x = event.mouse.x;
+								mouse_y = event.mouse.y;
+
+								///Obracanie domino
+								if (key_down)
+								{
+									tiles[i]->rotation_degree += 90;
+									if (tiles[i]->rotation_degree >= 360)
+										tiles[i]->rotation_degree = 0;
+									key_down = false;
+								}
+							}
+					}
+				
+
+
+
 				}
 
 			}
@@ -307,7 +376,10 @@ int main()
 
 			wyswietlanie_domino(tiles, ilosc_domino);
 
-			al_draw_rectangle(tiles[1]->l_x, tiles[1]->l_y, tiles[1]->p_x + 60, tiles[1]->p_y + 60, al_map_rgb(0, 255, 0), 5);
+			//Narysowane hitboxy
+			//al_draw_rectangle(tiles[1]->l_x, tiles[1]->l_y, tiles[1]->p_x + 60, tiles[1]->p_y + 60, al_map_rgb(0, 255, 0), 5);
+			//al_draw_rectangle(tiles[1]->l_x-30, tiles[1]->l_y + 30, tiles[1]->p_x + 90, tiles[1]->p_y + 30, al_map_rgb(0, 255, 0), 5);
+
 
 			al_flip_display();
 			redraw = false;
