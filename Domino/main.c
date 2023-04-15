@@ -37,6 +37,16 @@ void losowanie_oczek(struct Tile** tiles, int ilosc_domino) {
 	}
 }
 
+void losowanie_oczek_dobrane(struct Tile** tiles, int ilosc_domino) {
+
+
+	tiles[ilosc_domino]->ilosc_oczek_lewo = rand() % 7;
+	tiles[ilosc_domino]->ilosc_oczek_prawo = rand() % 7;
+
+}
+
+
+
 ///sprawdzanie inicjacji
 void sprawdzanie_init(bool test, char* opis)
 {
@@ -99,6 +109,61 @@ void przypisanie_grafik(Tile** tiles, int ilosc_domino) {
 			tiles[i]->prawo = al_load_bitmap("tile_6.png");
 			break;
 		}
+	}
+
+
+}
+
+
+void przypisanie_grafik_dobrane(Tile** tiles, int ilosc_domino) {
+
+
+	switch (tiles[ilosc_domino]->ilosc_oczek_lewo) {
+	case 0:
+		tiles[ilosc_domino]->lewo = al_load_bitmap("tile_0.png");
+		break;
+	case 1:
+		tiles[ilosc_domino]->lewo = al_load_bitmap("tile_1.png");
+		break;
+	case 2:
+		tiles[ilosc_domino]->lewo = al_load_bitmap("tile_2.png");
+		break;
+	case 3:
+		tiles[ilosc_domino]->lewo = al_load_bitmap("tile_3.png");
+		break;
+	case 4:
+		tiles[ilosc_domino]->lewo = al_load_bitmap("tile_4.png");
+		break;
+	case 5:
+		tiles[ilosc_domino]->lewo = al_load_bitmap("tile_5.png");
+		break;
+	case 6:
+		tiles[ilosc_domino]->lewo = al_load_bitmap("tile_6.png");
+		break;
+	}
+
+	switch (tiles[ilosc_domino]->ilosc_oczek_prawo) {
+	case 0:
+		tiles[ilosc_domino]->prawo = al_load_bitmap("tile_0.png");
+		break;
+	case 1:
+		tiles[ilosc_domino]->prawo = al_load_bitmap("tile_1.png");
+		break;
+	case 2:
+		tiles[ilosc_domino]->prawo = al_load_bitmap("tile_2.png");
+		break;
+	case 3:
+		tiles[ilosc_domino]->prawo = al_load_bitmap("tile_3.png");
+		break;
+	case 4:
+		tiles[ilosc_domino]->prawo = al_load_bitmap("tile_4.png");
+		break;
+	case 5:
+		tiles[ilosc_domino]->prawo = al_load_bitmap("tile_5.png");
+		break;
+	case 6:
+		tiles[ilosc_domino]->prawo = al_load_bitmap("tile_6.png");
+		break;
 	}
 
 
@@ -235,6 +300,12 @@ int main()
 	unsigned int length = 0;
 	int start_x = 290;
 
+
+	Tile** tiles_dobrane = NULL;
+	unsigned int length_dobrane = 0;
+	int i_dobrane = 0;
+	int ilosc_dobranych = 0;
+
 	int y_pos = SCREEN_HEIGHT - 200;
 	int y2_pos = SCREEN_HEIGHT - 200 + TILE_SIZE;
 	srand(time(0));
@@ -270,7 +341,7 @@ int main()
 	bool key_down = false;
 	float rotation_degree = 0;
 
-
+	bool button_pressed = false;
 
 	al_start_timer(timer);
 
@@ -316,6 +387,11 @@ int main()
 				mouse_x = event.mouse.x;
 				mouse_y = event.mouse.y;
 			}
+			if (event.mouse.x >= 0 && event.mouse.x <= 430 &&
+				event.mouse.y >= 0 && event.mouse.y <= 50) {
+				button_pressed = true;
+
+			}
 
 			break;
 
@@ -358,6 +434,20 @@ int main()
 						al_draw_text(font1, al_map_rgb(255, 255, 255), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 400, ALLEGRO_ALIGN_CENTRE, "Powrot");
 
 					}
+
+					if (button_pressed && event.mouse.x >= 0 && event.mouse.x <= 430 &&
+						event.mouse.y >= 0 && event.mouse.y <= 50) {
+						// Przycisk został kliknięty
+						printf("Przycisk dziala");
+						tiles_dobrane = dodawanie_domina(tiles_dobrane, i_dobrane, nowy(80, 80, 80, 140,0), &length_dobrane);
+
+						losowanie_oczek_dobrane(tiles_dobrane, ilosc_dobranych);
+						przypisanie_grafik_dobrane(tiles_dobrane, ilosc_dobranych);
+						i_dobrane++;
+						ilosc_dobranych++;
+						break;
+					}
+					button_pressed = false;
 
 				}
 				else if (zasady)
@@ -439,8 +529,60 @@ int main()
 
 
 
+
 				}
 
+
+				for (int i = 0; i < ilosc_dobranych; i++)
+				{
+					if (event.mouse.x >= tiles_dobrane[i]->l_x && event.mouse.x <= tiles_dobrane[i]->p_x + TILE_SIZE)
+						if (event.mouse.y >= tiles_dobrane[i]->l_y && event.mouse.y <= tiles_dobrane[i]->p_y + TILE_SIZE)
+						{
+							tiles_dobrane[i]->l_x = tiles_dobrane[i]->l_x + event.mouse.x - mouse_x;
+							tiles_dobrane[i]->l_y = tiles_dobrane[i]->l_y + event.mouse.y - mouse_y;
+
+							tiles_dobrane[i]->p_x = tiles_dobrane[i]->p_x + event.mouse.x - mouse_x;
+							tiles_dobrane[i]->p_y = tiles_dobrane[i]->p_y + event.mouse.y - mouse_y;
+
+							mouse_x = event.mouse.x;
+							mouse_y = event.mouse.y;
+
+
+							///Obracanie domino
+							if (key_down)
+							{
+								tiles_dobrane[i]->rotation_degree += 90;
+								if (tiles_dobrane[i]->rotation_degree >= 360)
+									tiles_dobrane[i]->rotation_degree = 0;
+								key_down = false;
+							}
+
+						}
+						else
+						{
+							if (event.mouse.x >= tiles_dobrane[i]->l_x - 30 && event.mouse.x <= tiles_dobrane[i]->p_x + 90)
+								if (event.mouse.y >= tiles_dobrane[i]->l_y + 30 && event.mouse.y <= tiles_dobrane[i]->p_y + 30)
+								{
+									tiles_dobrane[i]->l_x = tiles_dobrane[i]->l_x + event.mouse.x - mouse_x;
+									tiles_dobrane[i]->l_y = tiles_dobrane[i]->l_y + event.mouse.y - mouse_y;
+
+									tiles_dobrane[i]->p_x = tiles_dobrane[i]->p_x + event.mouse.x - mouse_x;
+									tiles_dobrane[i]->p_y = tiles_dobrane[i]->p_y + event.mouse.y - mouse_y;
+
+									mouse_x = event.mouse.x;
+									mouse_y = event.mouse.y;
+
+									///Obracanie domino
+									if (key_down)
+									{
+										tiles_dobrane[i]->rotation_degree += 90;
+										if (tiles_dobrane[i]->rotation_degree >= 360)
+											tiles_dobrane[i]->rotation_degree = 0;
+										key_down = false;
+									}
+								}
+						}
+				}
 			}
 			break;
 
@@ -484,6 +626,8 @@ int main()
 				al_clear_to_color(al_map_rgb(0, 64, 0));
 
 				wyswietlanie_domino(tiles, ilosc_domino);
+				wyswietlanie_domino(tiles_dobrane, ilosc_dobranych);
+				al_draw_rectangle(0, 0, 430, 50, al_map_rgb(0, 0, 0), 2);
 
 				//Narysowane hitboxy
 				//al_draw_rectangle(tiles[1]->l_x, tiles[1]->l_y, tiles[1]->p_x + 60, tiles[1]->p_y + 60, al_map_rgb(0, 255, 0), 5);
