@@ -16,9 +16,6 @@ struct Tile {
 
 	int p_x, p_y;
 	int l_x, l_y;
-
-	char tile_a[11], tile_b[11];
-
 	int ilosc_oczek_lewo, ilosc_oczek_prawo;
 	ALLEGRO_BITMAP* lewo;
 	ALLEGRO_BITMAP* prawo;
@@ -27,14 +24,17 @@ struct Tile {
 
 
 //losowanie liczby oczek klocka startowegoa
-void get_start_piece(struct Tile* tile) {
+void losowanie_oczek(struct Tile** tiles, int ilosc_domino) {
 
-	tile->ilosc_oczek_lewo = rand() % 7;
-	tile->ilosc_oczek_prawo = rand() % 7;
+	for (int i = 0; i < ilosc_domino; i++)
+	{
+		tiles[i]->ilosc_oczek_lewo = rand() % 7;
+		tiles[i]->ilosc_oczek_prawo = rand() % 7;
+	}
 }
 
 
-
+///Sprawdzanie inicjacji
 void sprawdznie_init(bool test, char* opis)
 {
 	if (test)
@@ -45,83 +45,120 @@ void sprawdznie_init(bool test, char* opis)
 
 
 
-void draw_start_tile(Tile* start_tile) {
+void przypisanie_grafik(Tile** tiles, int ilosc_domino) {
 
-	switch (start_tile->ilosc_oczek_lewo) {
-	case 0:
-		strcpy_s(start_tile->tile_a, 11, "tile_0.png");
-		break;
-	case 1:
-		strcpy_s(start_tile->tile_a, 11, "tile_1.png");
-		break;
-	case 2:
-		strcpy_s(start_tile->tile_a, 11, "tile_2.png");
-		break;
-	case 3:
-		strcpy_s(start_tile->tile_a, 11, "tile_3.png");
-		break;
-	case 4:
-		strcpy_s(start_tile->tile_a, 11, "tile_4.png");
-		break;
-	case 5:
-		strcpy_s(start_tile->tile_a, 11, "tile_5.png");
-		break;
-	case 6:
-		strcpy_s(start_tile->tile_a, 11, "tile_6.png");
-		break;
+	for (int i = 0; i < ilosc_domino; i++)
+	{
+		switch (tiles[i]->ilosc_oczek_lewo) {
+		case 0:
+			tiles[i]->lewo = al_load_bitmap("tile_0.png");
+			break;
+		case 1:
+			tiles[i]->lewo = al_load_bitmap("tile_1.png");
+			break;
+		case 2:
+			tiles[i]->lewo = al_load_bitmap("tile_2.png");
+			break;
+		case 3:
+			tiles[i]->lewo = al_load_bitmap("tile_3.png");
+			break;
+		case 4:
+			tiles[i]->lewo = al_load_bitmap("tile_4.png");
+			break;
+		case 5:
+			tiles[i]->lewo = al_load_bitmap("tile_5.png");
+			break;
+		case 6:
+			tiles[i]->lewo = al_load_bitmap("tile_6.png");
+			break;
+		}
+
+		switch (tiles[i]->ilosc_oczek_prawo) {
+		case 0:
+			tiles[i]->prawo = al_load_bitmap("tile_0.png");
+			break;
+		case 1:
+			tiles[i]->prawo = al_load_bitmap("tile_1.png");
+			break;
+		case 2:
+			tiles[i]->prawo = al_load_bitmap("tile_2.png");
+			break;
+		case 3:
+			tiles[i]->prawo = al_load_bitmap("tile_3.png");
+			break;
+		case 4:
+			tiles[i]->prawo = al_load_bitmap("tile_4.png");
+			break;
+		case 5:
+			tiles[i]->prawo = al_load_bitmap("tile_5.png");
+			break;
+		case 6:
+			tiles[i]->prawo = al_load_bitmap("tile_6.png");
+			break;
+		}
 	}
 
-	switch (start_tile->ilosc_oczek_prawo) {
-	case 0:
-		strcpy_s(start_tile->tile_b, 11, "tile_0.png");
-		break;
-	case 1:
-		strcpy_s(start_tile->tile_b, 11, "tile_1.png");
-		break;
-	case 2:
-		strcpy_s(start_tile->tile_b, 11, "tile_2.png");
-		break;
-	case 3:
-		strcpy_s(start_tile->tile_b, 11, "tile_3.png");
-		break;
-	case 4:
-		strcpy_s(start_tile->tile_b, 11, "tile_4.png");
-		break;
-	case 5:
-		strcpy_s(start_tile->tile_b, 11, "tile_5.png");
-		break;
-	case 6:
-		strcpy_s(start_tile->tile_b, 11, "tile_6.png");
-		break;
-	}
+
 }
 
 
-void game_draw(Tile blok1, Tile blok2, Tile blok3, Tile blok4, Tile blok5, Tile blok6, Tile blok7)
+void wyswietlanie_domino(Tile** tiles, int ilosc_domino)
 {
-	al_draw_bitmap(blok1.lewo, 290, SCREEN_HEIGHT - 200, 0);
-	al_draw_bitmap(blok1.prawo, 290, SCREEN_HEIGHT - 200 + TILE_SIZE, 0);
-
-	al_draw_bitmap(blok2.lewo, 390, SCREEN_HEIGHT - 200, 0);
-	al_draw_bitmap(blok2.prawo, 390, SCREEN_HEIGHT - 200 + TILE_SIZE, 0);
-
-	al_draw_bitmap(blok3.lewo, 490, SCREEN_HEIGHT - 200, 0);
-	al_draw_bitmap(blok3.prawo, 490, SCREEN_HEIGHT - 200 + TILE_SIZE, 0);
-
-	al_draw_bitmap(blok4.lewo, 590, SCREEN_HEIGHT - 200, 0);
-	al_draw_bitmap(blok4.prawo, 590, SCREEN_HEIGHT - 200 + TILE_SIZE, 0);
-
-	al_draw_bitmap(blok5.lewo, 690, SCREEN_HEIGHT - 200, 0);
-	al_draw_bitmap(blok5.prawo, 690, SCREEN_HEIGHT - 200 + TILE_SIZE, 0);
-
-	al_draw_bitmap(blok6.lewo, 790, SCREEN_HEIGHT - 200, 0);
-	al_draw_bitmap(blok6.prawo, 790, SCREEN_HEIGHT - 200 + TILE_SIZE, 0);
-
-	al_draw_bitmap(blok7.lewo, 890, SCREEN_HEIGHT - 200, 0);
-	al_draw_bitmap(blok7.prawo, 890, SCREEN_HEIGHT - 200 + TILE_SIZE, 0);
-
+	for (int i = 0; i < ilosc_domino; i++)
+	{
+		al_draw_bitmap(tiles[i]->lewo, tiles[i]->l_x, tiles[i]->l_y, 0);
+		al_draw_bitmap(tiles[i]->prawo, tiles[i]->p_x, tiles[i]->p_y, 0);
+	}
 }
 
+
+Tile* nowy(int l_x, int l_y, int p_x, int p_y)
+{
+	Tile* n = (Tile*)malloc(sizeof(Tile));
+	if (n)
+	{
+		n->l_x = l_x;
+		n->l_y = l_y;
+		n->p_x = p_x;
+		n->p_y = p_y;
+		return n;
+	}
+	return NULL;
+}
+
+Tile** dodawanie_domina(Tile** tab, int index, Tile* domino, unsigned int* length)
+{
+	const unsigned int powiekszenie = 10;
+
+	if (index >= *length)
+	{
+		*length += powiekszenie;
+		Tile** nowa_tab = realloc(tab, (*length) * sizeof(Tile*));
+		if (nowa_tab)
+			tab = nowa_tab;
+	}
+	if (tab)
+		tab[index] = domino;
+	return tab;
+}
+
+void print_array(Tile** array, const unsigned int number_of_values)
+{
+	if (array) {
+		printf("W tablicy znajduje siê %u wartoœci.\n", number_of_values);
+		for (int i = 0; i < number_of_values; i++)
+		{
+			printf("l_x %d \n", array[i]->l_x);
+			printf("l_y %d \n", array[i]->l_y);
+			printf("p_x %d \n", array[i]->p_x);
+			printf("p_y %d \n", array[i]->p_y);
+			printf("ilosc_oczek_lewo %d \n", array[i]->ilosc_oczek_lewo);
+			array[i]->lewo;
+
+		}
+		puts("");
+	}
+}
 
 
 
@@ -139,16 +176,6 @@ int main()
 	sprawdznie_init(display, "Obraz");
 
 	//char tile_a[11] = "tile_0.png", tile_b[11] = "tile_0.png"; //tablice przechowuj¹ce nazwy plików obrazów
-	struct Tile start_tile;
-	get_start_piece(&start_tile);
-	draw_start_tile(&start_tile);
-
-
-	Tile domino_tile;
-	domino_tile.lewo = al_load_bitmap(start_tile.tile_a);
-	domino_tile.prawo = al_load_bitmap(start_tile.tile_b);
-
-
 
 
 
@@ -170,66 +197,46 @@ int main()
 
 	ALLEGRO_EVENT event;
 
+	Tile** tiles = NULL;
+	int ilosc_domino = 8;
+	unsigned int length = 0;
+	int start_x = 290;
 
-	Tile blok;
-	blok.lewo = al_load_bitmap("tile_1.png");
-	blok.prawo = al_load_bitmap("tile_1.png");
-
-	Tile blok1, blok2, blok3, blok4, blok5, blok6, blok7;
-
-	get_start_piece(&blok1);
-	draw_start_tile(&blok1);
-	blok1.lewo = al_load_bitmap(blok1.tile_a);
-	blok1.prawo = al_load_bitmap(blok1.tile_b);
-
-	get_start_piece(&blok2);
-	draw_start_tile(&blok2);
-	blok2.lewo = al_load_bitmap(blok2.tile_a);
-	blok2.prawo = al_load_bitmap(blok2.tile_b);
-
-	get_start_piece(&blok3);
-	draw_start_tile(&blok3);
-	blok3.lewo = al_load_bitmap(blok3.tile_a);
-	blok3.prawo = al_load_bitmap(blok3.tile_b);
+	int y_pos = SCREEN_HEIGHT - 200;
+	int y2_pos = SCREEN_HEIGHT - 200 + TILE_SIZE;
+	srand(time(0));
 
 
-	get_start_piece(&blok4);
-	draw_start_tile(&blok4);
-	blok4.lewo = al_load_bitmap(blok4.tile_a);
-	blok4.prawo = al_load_bitmap(blok4.tile_b);
 
+	for (int i = 0; i < ilosc_domino; i++)
+	{
+		if (i == 0)
+		{
+			/// Œrodkowe domino
+			tiles = dodawanie_domina(tiles, i, nowy(SCREEN_WIDTH / 2 - TILE_SIZE, SCREEN_HEIGHT / 2 - TILE_SIZE / 2, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - TILE_SIZE / 2), &length);
+		}
+		else if (i == 1)
+		{
+			tiles = dodawanie_domina(tiles, i, nowy(start_x, y_pos, start_x, y2_pos), &length);
+		}
+		else
+		{
+			tiles = dodawanie_domina(tiles, i, nowy(tiles[i - 1]->l_x + 100, y_pos, tiles[i - 1]->p_x + 100, y2_pos), &length);
+		}
 
-	get_start_piece(&blok5);
-	draw_start_tile(&blok5);
-	blok5.lewo = al_load_bitmap(blok5.tile_a);
-	blok5.prawo = al_load_bitmap(blok5.tile_b);
+	}
 
+	losowanie_oczek(tiles, ilosc_domino);
+	przypisanie_grafik(tiles, ilosc_domino);
+	print_array(tiles, ilosc_domino);
 
-	get_start_piece(&blok6);
-	draw_start_tile(&blok6);
-	blok6.lewo = al_load_bitmap(blok6.tile_a);
-	blok6.prawo = al_load_bitmap(blok6.tile_b);
-
-
-	get_start_piece(&blok7);
-	draw_start_tile(&blok7);
-	blok7.lewo = al_load_bitmap(blok7.tile_a);
-	blok7.prawo = al_load_bitmap(blok7.tile_b);
-	blok.l_x = 100;
-	blok.l_y = 100;
-
-
-	blok.p_x = 100;
-	blok.p_y = 160;
 
 
 	bool button_down = false;
-
 	int mouse_x, mouse_y;
 
-
 	al_start_timer(timer);
-
+	///Funkcja g³ówna
 	while (true)
 	{
 		al_wait_for_event(queue, &event);
@@ -267,20 +274,26 @@ int main()
 
 		case ALLEGRO_EVENT_MOUSE_AXES:
 
+			//Przesuwanie bloków
 			if (button_down)
 			{
-				blok.l_x = blok.l_x + event.mouse.x - mouse_x;
-				blok.l_y = blok.l_y + event.mouse.y - mouse_y;
+				for (int i = 1; i < ilosc_domino; i++)
+				{
+					if (event.mouse.x >= tiles[i]->l_x && event.mouse.x <= tiles[i]->p_x + TILE_SIZE)
+						if (event.mouse.y >= tiles[i]->l_y && event.mouse.y <= tiles[i]->p_y + TILE_SIZE)
+						{
+							tiles[i]->l_x = tiles[i]->l_x + event.mouse.x - mouse_x;
+							tiles[i]->l_y = tiles[i]->l_y + event.mouse.y - mouse_y;
 
-				blok.p_x = blok.p_x + event.mouse.x - mouse_x;
-				blok.p_y = blok.p_y + event.mouse.y - mouse_y;
+							tiles[i]->p_x = tiles[i]->p_x + event.mouse.x - mouse_x;
+							tiles[i]->p_y = tiles[i]->p_y + event.mouse.y - mouse_y;
 
-				mouse_x = event.mouse.x;
-				mouse_y = event.mouse.y;
+							mouse_x = event.mouse.x;
+							mouse_y = event.mouse.y;
+						}
+				}
 
 			}
-
-
 
 			break;
 
@@ -292,13 +305,9 @@ int main()
 		{
 			al_clear_to_color(al_map_rgb(255, 255, 255));
 
-			al_draw_bitmap(blok.lewo, blok.l_x, blok.l_y, 0);
-			al_draw_bitmap(blok.prawo, blok.p_x, blok.p_y, 0);
+			wyswietlanie_domino(tiles, ilosc_domino);
 
-			al_draw_bitmap(domino_tile.lewo, SCREEN_WIDTH / 2 - TILE_SIZE, SCREEN_HEIGHT / 2 - TILE_SIZE / 2, 0);
-			al_draw_bitmap(domino_tile.prawo, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - TILE_SIZE / 2, 0);
-
-			game_draw(blok1, blok2, blok3, blok4, blok5, blok6, blok7);
+			al_draw_rectangle(tiles[1]->l_x, tiles[1]->l_y, tiles[1]->p_x + 60, tiles[1]->p_y + 60, al_map_rgb(0, 255, 0), 5);
 
 			al_flip_display();
 			redraw = false;
@@ -307,12 +316,16 @@ int main()
 
 	}
 
+	for (int i = 0; i < ilosc_domino; i++)
+	{
+		free(tiles[i]);
+	}
+	free(tiles);
 
 	al_destroy_display(display);
 	al_destroy_timer(timer);
 	al_destroy_event_queue(queue);
-	al_destroy_bitmap(blok.lewo);
-	al_destroy_bitmap(blok.prawo);
+
 
 
 }
