@@ -1,15 +1,19 @@
+ï»¿#include <stdio.h>
 #include <stdlib.h>
-#include <stdio.h>
-#include<allegro5/allegro.h>
-#include<allegro5/allegro_primitives.h>
-#include<allegro5/allegro_image.h>
-#include<stdbool.h>
-#include<time.h>
+#include <stdbool.h>
+#include <allegro5/allegro.h>
+#include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_font.h>
+#include <allegro5/allegro_ttf.h>
+#include <allegro5/allegro_image.h>
+#include <time.h>
+
 
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 960
 #define TILE_SIZE 60
 
+float x, y;
 
 typedef struct Tile Tile;
 struct Tile {
@@ -23,7 +27,6 @@ struct Tile {
 
 };
 
-
 //losowanie liczby oczek klocka startowegoa
 void losowanie_oczek(struct Tile** tiles, int ilosc_domino) {
 
@@ -34,9 +37,8 @@ void losowanie_oczek(struct Tile** tiles, int ilosc_domino) {
 	}
 }
 
-
-///Sprawdzanie inicjacji
-void sprawdznie_init(bool test, char* opis)
+///sprawdzanie inicjacji
+void sprawdzanie_init(bool test, char* opis)
 {
 	if (test)
 		return;
@@ -45,7 +47,7 @@ void sprawdznie_init(bool test, char* opis)
 }
 
 
-/// Przypisywanie odpowiednich grafik dla ka¿dej ze stron bloku
+/// Przypisywanie odpowiednich grafik dla kaÅ¼dej ze stron bloku
 void przypisanie_grafik(Tile** tiles, int ilosc_domino) {
 
 	for (int i = 0; i < ilosc_domino; i++)
@@ -101,16 +103,15 @@ void przypisanie_grafik(Tile** tiles, int ilosc_domino) {
 
 
 }
-
-/// Wyœwietlanie domina na ekranie
+/// WyÅ›wietlanie domina na ekranie
 void wyswietlanie_domino(Tile** tiles, int ilosc_domino)
 {
 	for (int i = 0; i < ilosc_domino; i++)
 	{
 		if (i == 0)
 		{
-			al_draw_bitmap(tiles[i]->lewo, tiles[i]->l_x, tiles[i]->l_y,0);
-			al_draw_bitmap(tiles[i]->prawo, tiles[i]->p_x, tiles[i]->p_y,0);
+			al_draw_bitmap(tiles[i]->lewo, tiles[i]->l_x, tiles[i]->l_y, 0);
+			al_draw_bitmap(tiles[i]->prawo, tiles[i]->p_x, tiles[i]->p_y, 0);
 		}
 		else
 		{
@@ -119,11 +120,11 @@ void wyswietlanie_domino(Tile** tiles, int ilosc_domino)
 			al_draw_rotated_bitmap(tiles[i]->prawo, TILE_SIZE / 2, 0, tiles[i]->p_x + TILE_SIZE / 2, tiles[i]->p_y, tiles[i]->rotation_degree * 3.14159 / 180, 0);
 
 		}
-		
+
 	}
 }
 
-/// Tworzenie nowych bloków domina
+/// Tworzenie nowych blokÃ³w domina
 Tile* nowy(int l_x, int l_y, int p_x, int p_y, float rotation_degree)
 {
 	Tile* n = (Tile*)malloc(sizeof(Tile));
@@ -139,7 +140,7 @@ Tile* nowy(int l_x, int l_y, int p_x, int p_y, float rotation_degree)
 	return NULL;
 }
 
-/// Powiêkszanie tablicy i dodawanie nowych domin do tablicy
+/// PowiÄ™kszanie tablicy i dodawanie nowych domin do tablicy
 Tile** dodawanie_domina(Tile** tab, int index, Tile* domino, unsigned int* length)
 {
 	const unsigned int powiekszenie = 10;
@@ -155,11 +156,12 @@ Tile** dodawanie_domina(Tile** tab, int index, Tile* domino, unsigned int* lengt
 		tab[index] = domino;
 	return tab;
 }
-/// Wyœwietlanie zawartoœci tablicy z domino / Sprawdzanie wartoœci
+
+/// WyÅ›wietlanie zawartoÅ›ci tablicy z domino / Sprawdzanie wartoÅ›ci
 void print_array(Tile** array, const unsigned int number_of_values)
 {
 	if (array) {
-		printf("W tablicy znajduje siê %u wartoœci.\n", number_of_values);
+		printf("W tablicy znajduje siÄ™ %u wartoÅ›ci.\n", number_of_values);
 		for (int i = 0; i < number_of_values; i++)
 		{
 			printf("l_x %d \n", array[i]->l_x);
@@ -175,29 +177,36 @@ void print_array(Tile** array, const unsigned int number_of_values)
 }
 
 
-
 int main()
 {
-	sprawdznie_init(al_init(), "allegro");
-	sprawdznie_init(al_install_keyboard(), "klawiatura");
-	sprawdznie_init(al_install_mouse(), "mysz");
-	sprawdznie_init(al_init_primitives_addon(), "primitives addon");
-	sprawdznie_init(al_init_image_addon(), "zdjecia addon");
+	sprawdzanie_init(al_init(), "allegro");
+	sprawdzanie_init(al_init_primitives_addon(), "primitives addon");
+	sprawdzanie_init(al_init_image_addon(), "image addon");
+	sprawdzanie_init(al_init_font_addon(), "font addon");
+	sprawdzanie_init(al_install_mouse(), "mouse");
+	sprawdzanie_init(al_init_ttf_addon(), "ttf addon");
+	sprawdzanie_init(al_install_keyboard(), "klawiatura");
 
 	srand(time(NULL));
 
 	ALLEGRO_DISPLAY* display = al_create_display(SCREEN_WIDTH, SCREEN_HEIGHT);
-	sprawdznie_init(display, "Obraz");
+	sprawdzanie_init(display, "display");
 
-	//char tile_a[11] = "tile_0.png", tile_b[11] = "tile_0.png"; //tablice przechowuj¹ce nazwy plików obrazów
+
+	//char tile_a[11] = "tile_0.png", tile_b[11] = "tile_0.png"; //tablice przechowujÂ¹ce nazwy plikÃ³w obrazÃ³w
 
 
 
 	ALLEGRO_TIMER* timer = al_create_timer(1.0 / 60.0);
-	sprawdznie_init(timer, "Zegar");
+	sprawdzanie_init(timer, "Zegar");
+
+	ALLEGRO_BITMAP* background = al_load_bitmap("background.png");
+	sprawdzanie_init(background, "background");
 
 	ALLEGRO_EVENT_QUEUE* queue = al_create_event_queue();
-	sprawdznie_init(queue, "Kolejka");
+	sprawdzanie_init(queue, "queue");
+
+	ALLEGRO_USTR* username2 = al_ustr_new("");
 
 
 	al_register_event_source(queue, al_get_keyboard_event_source());
@@ -205,11 +214,21 @@ int main()
 	al_register_event_source(queue, al_get_display_event_source(display));
 	al_register_event_source(queue, al_get_timer_event_source(timer));
 
-
 	bool done = false;
 	bool redraw = true;
 
 	ALLEGRO_EVENT event;
+
+	ALLEGRO_FONT* font1 = al_load_font("Playground.ttf", 36, 0);
+	ALLEGRO_FONT* font2 = al_load_font("Playground.ttf", 100, 0);
+	ALLEGRO_FONT* font3 = al_load_font("Playground.ttf", 18, 0);
+
+	bool zasady = false;
+	al_set_target_bitmap(al_get_backbuffer(display));
+
+
+	bool menu = true;
+	bool running = true;
 
 	Tile** tiles = NULL;
 	int ilosc_domino = 8;
@@ -220,22 +239,21 @@ int main()
 	int y2_pos = SCREEN_HEIGHT - 200 + TILE_SIZE;
 	srand(time(0));
 
-
-	///Tworzenie pocz¹tkowych domino
+	///Tworzenie poczÄ…tkowych domino
 	for (int i = 0; i < ilosc_domino; i++)
 	{
 		if (i == 0)
 		{
-			/// Œrodkowe domino
-			tiles = dodawanie_domina(tiles, i, nowy(SCREEN_WIDTH / 2 - TILE_SIZE, SCREEN_HEIGHT / 2 - TILE_SIZE / 2, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - TILE_SIZE / 2,0	), &length);
+			/// Åšrodkowe domino
+			tiles = dodawanie_domina(tiles, i, nowy(SCREEN_WIDTH / 2 - TILE_SIZE, SCREEN_HEIGHT / 2 - TILE_SIZE / 2, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - TILE_SIZE / 2, 0), &length);
 		}
 		else if (i == 1)
 		{
-			tiles = dodawanie_domina(tiles, i, nowy(start_x, y_pos, start_x, y2_pos,0), &length);
+			tiles = dodawanie_domina(tiles, i, nowy(start_x, y_pos, start_x, y2_pos, 0), &length);
 		}
 		else
 		{
-			tiles = dodawanie_domina(tiles, i, nowy(tiles[i - 1]->l_x + 100, y_pos, tiles[i - 1]->p_x + 100, y2_pos,0), &length);
+			tiles = dodawanie_domina(tiles, i, nowy(tiles[i - 1]->l_x + 100, y_pos, tiles[i - 1]->p_x + 100, y2_pos, 0), &length);
 		}
 
 	}
@@ -244,69 +262,130 @@ int main()
 	przypisanie_grafik(tiles, ilosc_domino);
 	print_array(tiles, ilosc_domino);
 
-
-
-	bool mouse_button_down = false;
+	bool button_down = false;
+	bool new_game = false;
+	bool username1 = true;
 	int mouse_x, mouse_y;
 
-
 	bool key_down = false;
-
 	float rotation_degree = 0;
 
+
+
 	al_start_timer(timer);
-	///Funkcja g³ówna
-	while (true)
+
+	while (running)
 	{
 		al_wait_for_event(queue, &event);
 
+		if (username1)
+		{
+			al_clear_to_color(al_map_rgb(0, 0, 0));
+			al_draw_text(font1, al_map_rgb(255, 255, 255), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 20, ALLEGRO_ALIGN_CENTRE, "Podaj nazwe uzytkownika");
+			al_draw_text(font1, al_map_rgb(255, 255, 255), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 20, ALLEGRO_ALIGN_CENTRE, al_cstr(username2));
+
+		}
+
+		if (menu)
+		{
+			al_draw_bitmap(background, 0, 0, 0);
+			al_draw_text(font2, al_map_rgb(255, 255, 255), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 450, ALLEGRO_ALIGN_CENTER, "DOMINO");
+			al_draw_text(font1, al_map_rgb(255, 255, 255), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 30, ALLEGRO_ALIGN_CENTRE, "Nowa Gra");
+			al_draw_text(font1, al_map_rgb(255, 255, 255), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 30, ALLEGRO_ALIGN_CENTRE, "Zasady");
+			al_draw_text(font1, al_map_rgb(255, 255, 255), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 90, ALLEGRO_ALIGN_CENTRE, "Wyjscie");
+		}
+
 		switch (event.type)
 		{
+
 		case ALLEGRO_EVENT_TIMER:
 			redraw = true;
 			break;
 
+
 		case ALLEGRO_EVENT_DISPLAY_CLOSE:
 			done = true;
 			break;
-			///Sprawdzenie czy wciœniêto przycis do oborotu bloku oraz ustawienie jego statusu
-		case ALLEGRO_EVENT_KEY_CHAR:
-			if (event.keyboard.keycode = ALLEGRO_KEY_R)
-			{
-				key_down = true;
-			}
-			break;
-			///Sprawdzenie czy wciœniêto przyscisk myszy
+
+
 		case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
 
 			if (event.mouse.button & 1)
 			{
-				mouse_button_down = true;
+				button_down = true;
 				mouse_x = event.mouse.x;
 				mouse_y = event.mouse.y;
 			}
 
 			break;
-			///Sprawdzenie czy przycisk myszy zosta³ puszczony
+
 		case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
 
 			if (event.mouse.button & 1)
 			{
-				mouse_button_down = false;
-			}
+				button_down = false;
+				/// Nowa gra
+				if (!zasady)
+				{
+					if (event.mouse.x > SCREEN_WIDTH / 2 - 90 && event.mouse.x < SCREEN_WIDTH / 2 + 90 && event.mouse.y > SCREEN_HEIGHT / 2 - 30 && event.mouse.y < SCREEN_HEIGHT / 2 - 5)
+					{
+						menu = false;
+						new_game = true;
+						username1 = true;
+					}
 
+					//WyjÅ›cie
+					if (event.mouse.x > SCREEN_WIDTH / 2 - 70 && event.mouse.x < SCREEN_WIDTH / 2 + 70 && event.mouse.y > SCREEN_HEIGHT / 2 + 90 && event.mouse.y < SCREEN_HEIGHT / 2 + 110)
+					{
+						menu = false;
+						running = false;
+					}
+
+					/// Zasady
+					if (event.mouse.x > SCREEN_WIDTH / 2 - 70 && event.mouse.x < SCREEN_WIDTH / 2 + 70 && event.mouse.y > SCREEN_HEIGHT / 2 + 30 && event.mouse.y < SCREEN_HEIGHT / 2 + 70)
+					{
+						zasady = true;
+						menu = false;
+						username1 = false;
+						al_draw_bitmap(background, 0, 0, 0);
+						al_draw_text(font3, al_map_rgb(255, 255, 255), 0, 20, ALLEGRO_ALIGN_LEFT, "1.Gra odbywa sie z uzyciem zestawu kosci domino, skladajacego sie z 28 kamieni");
+						al_draw_text(font3, al_map_rgb(255, 255, 255), 0, 40, ALLEGRO_ALIGN_LEFT, "2.Kazdy kamien sklada sie z dwoch pol, z kazdej strony znajduje sie na nim od 0 do 6 kropek.");
+						al_draw_text(font3, al_map_rgb(255, 255, 255), 0, 60, ALLEGRO_ALIGN_LEFT, "3.Gra zaczyna sie od wylozenia na stol jednego z kamieni (tzw. kostki) z dowolnie wybranym ukladem kropek.");
+						al_draw_text(font3, al_map_rgb(255, 255, 255), 0, 80, ALLEGRO_ALIGN_LEFT, "4.Gracze na przemian dolaczaja do kostki kolejne kamienie, tak aby liczba kropek na jednym polu nowo dolozonej kostki byla");
+						al_draw_text(font3, al_map_rgb(255, 255, 255), 0, 100, ALLEGRO_ALIGN_LEFT, "rowna liczbie kropek na odpowiadajacym mu polu kostki lezacej na stole.");
+						al_draw_text(font3, al_map_rgb(255, 255, 255), 0, 120, ALLEGRO_ALIGN_LEFT, "5.Jesli gracz nie moze dolozyc zadnego kamienia, przepada swoja kolejke.");
+						al_draw_text(font3, al_map_rgb(255, 255, 255), 0, 140, ALLEGRO_ALIGN_LEFT, "6.Wygrywa gracz, ktory pierwszy pozbyl sie wszystkich swoich kamieni.");
+						al_draw_text(font1, al_map_rgb(255, 255, 255), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 400, ALLEGRO_ALIGN_CENTRE, "Powrot");
+
+					}
+
+				}
+				else if (zasady)
+				{
+					//powrÃ³t
+					if (event.mouse.x > SCREEN_WIDTH / 2 - 70 && event.mouse.x < SCREEN_WIDTH / 2 + 70 && event.mouse.y < SCREEN_HEIGHT / 2 + 430 && event.mouse.y > SCREEN_HEIGHT / 2 + 400)
+					{
+						menu = true;
+						zasady = false;
+
+					}
+				}
+			}
 			break;
 
 		case ALLEGRO_EVENT_MOUSE_AXES:
 
-			//Przesuwanie bloków
-			if (mouse_button_down)
+			x = event.mouse.x;
+			y = event.mouse.y;
+
+			//Przesuwanie blokÃ³w
+			if (button_down)
 			{
 				for (int i = 1; i < ilosc_domino; i++)
 				{
 
 
-					if(tiles[i]->rotation_degree == 0 || tiles[i]->rotation_degree == 180 )
+					if (tiles[i]->rotation_degree == 0 || tiles[i]->rotation_degree == 180)
 					{
 						if (event.mouse.x >= tiles[i]->l_x && event.mouse.x <= tiles[i]->p_x + TILE_SIZE)
 							if (event.mouse.y >= tiles[i]->l_y && event.mouse.y <= tiles[i]->p_y + TILE_SIZE)
@@ -324,17 +403,17 @@ int main()
 								///Obracanie domino
 								if (key_down)
 								{
-									tiles[i]->rotation_degree +=90;
+									tiles[i]->rotation_degree += 90;
 									if (tiles[i]->rotation_degree >= 360)
 										tiles[i]->rotation_degree = 0;
 									key_down = false;
 								}
-								
+
 							}
 					}
 					else
 					{
-						if(event.mouse.x >= tiles[i]->l_x - 30 && event.mouse.x <= tiles[i]->p_x + 90)
+						if (event.mouse.x >= tiles[i]->l_x - 30 && event.mouse.x <= tiles[i]->p_x + 90)
 							if (event.mouse.y >= tiles[i]->l_y + 30 && event.mouse.y <= tiles[i]->p_y + 30)
 							{
 								tiles[i]->l_x = tiles[i]->l_x + event.mouse.x - mouse_x;
@@ -356,37 +435,67 @@ int main()
 								}
 							}
 					}
-				
+
 
 
 
 				}
 
 			}
-
 			break;
 
+		case ALLEGRO_EVENT_KEY_CHAR:
+		{
+			int keycode = event.keyboard.keycode;
+			if ((keycode >= ALLEGRO_KEY_A && keycode <= ALLEGRO_KEY_Z) || keycode == ALLEGRO_KEY_SPACE) {
+				al_ustr_append_chr(username2, (char)tolower(event.keyboard.unichar));
+			}
+			else if (keycode == ALLEGRO_KEY_BACKSPACE && al_ustr_length(username2) > 0) {
+				al_ustr_remove_chr(username2, al_ustr_length(username2) - 1);
+			}
+			else if (keycode == ALLEGRO_KEY_ENTER && al_ustr_length(username2) > 0)
+			{
+				username1 = false;
+				break;
+			}
+
+			///Sprawdzenie czy wciÅ›niÄ™to przycis do oborotu bloku oraz ustawienie jego statusu
+			if (event.keyboard.keycode = ALLEGRO_KEY_R)
+			{
+				key_down = true;
+			}
+
+			al_clear_to_color(al_map_rgb(0, 0, 0));
+			al_draw_text(font1, al_map_rgb(255, 255, 255), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 20, ALLEGRO_ALIGN_CENTRE, "Podaj nazwe uzytkownika");
+			al_flip_display();
 		}
+		break;
+		}
+
+
 		if (done)
 			break;
+		//GRA
 
 		if (redraw && al_is_event_queue_empty(queue))
 		{
-			al_clear_to_color(al_map_rgb(255, 255, 255));
+			if (!username1 && new_game)
+			{
+				al_clear_to_color(al_map_rgb(0, 64, 0));
 
-			wyswietlanie_domino(tiles, ilosc_domino);
+				wyswietlanie_domino(tiles, ilosc_domino);
 
-			//Narysowane hitboxy
-			//al_draw_rectangle(tiles[1]->l_x, tiles[1]->l_y, tiles[1]->p_x + 60, tiles[1]->p_y + 60, al_map_rgb(0, 255, 0), 5);
-			//al_draw_rectangle(tiles[1]->l_x-30, tiles[1]->l_y + 30, tiles[1]->p_x + 90, tiles[1]->p_y + 30, al_map_rgb(0, 255, 0), 5);
+				//Narysowane hitboxy
+				//al_draw_rectangle(tiles[1]->l_x, tiles[1]->l_y, tiles[1]->p_x + 60, tiles[1]->p_y + 60, al_map_rgb(0, 255, 0), 5);
+				//al_draw_rectangle(tiles[1]->l_x-30, tiles[1]->l_y + 30, tiles[1]->p_x + 90, tiles[1]->p_y + 30, al_map_rgb(0, 255, 0), 5)
 
-
-			al_flip_display();
-			redraw = false;
+				al_flip_display();
+				redraw = false;
+			}
 		}
-
-
+		al_flip_display();
 	}
+
 
 	for (int i = 0; i < ilosc_domino; i++)
 	{
@@ -394,10 +503,12 @@ int main()
 	}
 	free(tiles);
 
-	al_destroy_display(display);
-	al_destroy_timer(timer);
+
+	al_destroy_bitmap(background);
+	al_destroy_font(font1);
+	al_destroy_font(font2);
 	al_destroy_event_queue(queue);
+	al_destroy_display(display);
 
-
-
+	return 0;
 }
