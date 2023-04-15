@@ -286,7 +286,7 @@ int main()
 
 	ALLEGRO_FONT* font1 = al_load_font("Playground.ttf", 36, 0);
 	ALLEGRO_FONT* font2 = al_load_font("Playground.ttf", 100, 0);
-	ALLEGRO_FONT* font3 = al_load_font("Playground.ttf", 18, 0);
+	ALLEGRO_FONT* font3 = al_load_font("Playground.ttf", 40, 0);
 
 	bool zasady = false;
 	al_set_target_bitmap(al_get_backbuffer(display));
@@ -423,14 +423,15 @@ int main()
 						zasady = true;
 						menu = false;
 						username1 = false;
+
+						//al_draw_multiline_text(font, color, x, y, maxWidth, al_get_font_line_height(font), 0, text);
 						al_draw_bitmap(background, 0, 0, 0);
-						al_draw_text(font3, al_map_rgb(255, 255, 255), 0, 20, ALLEGRO_ALIGN_LEFT, "1.Gra odbywa sie z uzyciem zestawu kosci domino, skladajacego sie z 28 kamieni");
-						al_draw_text(font3, al_map_rgb(255, 255, 255), 0, 40, ALLEGRO_ALIGN_LEFT, "2.Kazdy kamien sklada sie z dwoch pol, z kazdej strony znajduje sie na nim od 0 do 6 kropek.");
-						al_draw_text(font3, al_map_rgb(255, 255, 255), 0, 60, ALLEGRO_ALIGN_LEFT, "3.Gra zaczyna sie od wylozenia na stol jednego z kamieni (tzw. kostki) z dowolnie wybranym ukladem kropek.");
-						al_draw_text(font3, al_map_rgb(255, 255, 255), 0, 80, ALLEGRO_ALIGN_LEFT, "4.Gracze na przemian dolaczaja do kostki kolejne kamienie, tak aby liczba kropek na jednym polu nowo dolozonej kostki byla");
-						al_draw_text(font3, al_map_rgb(255, 255, 255), 0, 100, ALLEGRO_ALIGN_LEFT, "rowna liczbie kropek na odpowiadajacym mu polu kostki lezacej na stole.");
-						al_draw_text(font3, al_map_rgb(255, 255, 255), 0, 120, ALLEGRO_ALIGN_LEFT, "5.Jesli gracz nie moze dolozyc zadnego kamienia, przepada swoja kolejke.");
-						al_draw_text(font3, al_map_rgb(255, 255, 255), 0, 140, ALLEGRO_ALIGN_LEFT, "6.Wygrywa gracz, ktory pierwszy pozbyl sie wszystkich swoich kamieni.");
+						al_draw_multiline_text(font3, al_map_rgb(255, 255, 255), 0, 20, SCREEN_WIDTH, al_get_font_line_height(font3),0, "1.Gra odbywa sie z uzyciem zestawu kosci domino, skladajacego sie z 28 kamieni");
+						al_draw_multiline_text(font3, al_map_rgb(255, 255, 255), 0, 100, SCREEN_WIDTH,al_get_font_line_height(font3), 0, "2.Kazdy kamien sklada sie z dwoch pol, z kazdej strony znajduje sie na nim od 0 do 6 kropek.");
+						al_draw_multiline_text(font3, al_map_rgb(255, 255, 255), 0, 180, SCREEN_WIDTH, al_get_font_line_height(font3), 0, "3.Gra zaczyna sie od wylozenia na stol jednego z kamieni (tzw. kostki) z dowolnie wybranym ukladem kropek.");
+						al_draw_multiline_text(font3, al_map_rgb(255, 255, 255), 0, 260, SCREEN_WIDTH, al_get_font_line_height(font3), 0, "4.Gracze na przemian dolaczaja do kostki kolejne kamienie, tak aby liczba kropek na jednym polu nowo dolozonej kostki byla rowna liczbie kropek na odpowiadajacym mu polu kostki lezacej na stole.");
+						al_draw_multiline_text(font3, al_map_rgb(255, 255, 255), 0, 420, SCREEN_WIDTH, al_get_font_line_height(font3), 0, "5.Jesli gracz nie moze dolozyc zadnego kamienia, przepada swoja kolejke.");
+						al_draw_multiline_text(font3, al_map_rgb(255, 255, 255), 0, 500, SCREEN_WIDTH, al_get_font_line_height(font3), 0, "6.Wygrywa gracz, ktory pierwszy pozbyl sie wszystkich swoich kamieni.");
 						al_draw_text(font1, al_map_rgb(255, 255, 255), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 400, ALLEGRO_ALIGN_CENTRE, "Powrot");
 
 					}
@@ -627,7 +628,8 @@ int main()
 
 				wyswietlanie_domino(tiles, ilosc_domino);
 				wyswietlanie_domino(tiles_dobrane, ilosc_dobranych);
-				al_draw_rectangle(0, 0, 430, 50, al_map_rgb(0, 0, 0), 2);
+				al_draw_filled_rectangle(0, 0, 430, 50, al_map_rgb(0, 64, 0), 10);
+				al_draw_text(font1, al_map_rgb(255, 255, 255), 10, 10, ALLEGRO_ALIGN_LEFT, "Dobierz kafelki tutaj");
 
 				//Narysowane hitboxy
 				//al_draw_rectangle(tiles[1]->l_x, tiles[1]->l_y, tiles[1]->p_x + 60, tiles[1]->p_y + 60, al_map_rgb(0, 255, 0), 5);
