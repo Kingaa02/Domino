@@ -6,6 +6,8 @@
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_image.h>
+#include <allegro5/allegro_audio.h>
+#include <allegro5/allegro_acodec.h>
 #include <time.h>
 
 
@@ -251,16 +253,21 @@ int main()
 	sprawdzanie_init(al_install_mouse(), "mouse");
 	sprawdzanie_init(al_init_ttf_addon(), "ttf addon");
 	sprawdzanie_init(al_install_keyboard(), "klawiatura");
-
+	sprawdzanie_init(al_install_audio(), "audio");
+	sprawdzanie_init(al_init_acodec_addon(), "acodec");
 	srand(time(NULL));
 
 	ALLEGRO_DISPLAY* display = al_create_display(SCREEN_WIDTH, SCREEN_HEIGHT);
 	sprawdzanie_init(display, "display");
 
+	//MUZYKA
+	al_reserve_samples(1);
+	ALLEGRO_SAMPLE* song = al_load_sample("song.wav");
+	ALLEGRO_SAMPLE_INSTANCE* songInstance = al_create_sample_instance(song);
+	al_set_sample_instance_playmode(songInstance, ALLEGRO_PLAYMODE_LOOP);
+	al_attach_sample_instance_to_mixer(songInstance, al_get_default_mixer());
 
 	//char tile_a[11] = "tile_0.png", tile_b[11] = "tile_0.png"; //tablice przechowuj¹ce nazwy plików obrazów
-
-
 
 	ALLEGRO_TIMER* timer = al_create_timer(1.0 / 60.0);
 	sprawdzanie_init(timer, "Zegar");
@@ -342,6 +349,9 @@ int main()
 	float rotation_degree = 0;
 
 	bool button_pressed = false;
+
+	//Odtwarzanie muzyki
+	al_play_sample_instance(songInstance);
 
 	al_start_timer(timer);
 
@@ -610,9 +620,9 @@ int main()
 
 			al_clear_to_color(al_map_rgb(0, 0, 0));
 			al_draw_text(font1, al_map_rgb(255, 255, 255), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 20, ALLEGRO_ALIGN_CENTRE, "Podaj nazwe uzytkownika");
-			al_flip_display();
+			break;
 		}
-		break;
+		al_flip_display();
 		}
 
 
@@ -655,6 +665,8 @@ int main()
 	al_destroy_font(font2);
 	al_destroy_event_queue(queue);
 	al_destroy_display(display);
+	al_destroy_sample(song);
+	al_destroy_sample_instance(songInstance);
 
 	return 0;
 }
