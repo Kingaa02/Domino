@@ -269,6 +269,10 @@ int main()
 
 	//char tile_a[11] = "tile_0.png", tile_b[11] = "tile_0.png"; //tablice przechowuj¹ce nazwy plików obrazów
 
+	//KURSOR
+	ALLEGRO_BITMAP* cursorImage = al_load_bitmap("cursor.png");
+	ALLEGRO_MOUSE_STATE mouseState;
+
 	ALLEGRO_TIMER* timer = al_create_timer(1.0 / 60.0);
 	sprawdzanie_init(timer, "Zegar");
 
@@ -356,9 +360,22 @@ int main()
 
 	al_start_timer(timer);
 
+	ALLEGRO_MOUSE_CURSOR* cursor = al_create_mouse_cursor(cursorImage, 0, 0);
+	al_set_mouse_cursor(display, cursor);
+
 	while (running)
 	{
 		al_wait_for_event(queue, &event);
+
+		al_get_mouse_state(&mouseState);
+
+		int windowX, windowY;
+		al_get_window_position(display, &windowX, &windowY);
+
+		int mouseX = mouseState.x - windowX;
+		int mouseY = mouseState.y - windowY;
+
+		al_set_target_bitmap(al_get_backbuffer(display));
 
 		if (username1)
 		{
@@ -371,7 +388,7 @@ int main()
 		if (menu)
 		{
 			al_draw_bitmap(background, 0, 0, 0);
-			al_draw_text(font2, al_map_rgb(255, 255, 255), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 450, ALLEGRO_ALIGN_CENTER, "DOMINO");
+			al_draw_text(font2, al_map_rgb(255, 255, 255), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 300, ALLEGRO_ALIGN_CENTER, "DOMINO");
 			al_draw_text(font1, al_map_rgb(255, 255, 255), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 30, ALLEGRO_ALIGN_CENTRE, "Nowa Gra");
 			al_draw_text(font1, al_map_rgb(255, 255, 255), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 30, ALLEGRO_ALIGN_CENTRE, "Zasady");
 			al_draw_text(font1, al_map_rgb(255, 255, 255), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 90, ALLEGRO_ALIGN_CENTRE, "Wyjscie");
