@@ -343,6 +343,7 @@ int main()
 	bool button_down = false;
 	bool new_game = false;
 	bool username1 = true;
+
 	int mouse_x, mouse_y;
 
 	bool key_down = false;
@@ -436,8 +437,8 @@ int main()
 
 						//al_draw_multiline_text(font, color, x, y, maxWidth, al_get_font_line_height(font), 0, text);
 						al_draw_bitmap(background, 0, 0, 0);
-						al_draw_multiline_text(font3, al_map_rgb(255, 255, 255), 0, 20, SCREEN_WIDTH, al_get_font_line_height(font3),0, "1.Gra odbywa sie z uzyciem zestawu kosci domino, skladajacego sie z 28 kamieni");
-						al_draw_multiline_text(font3, al_map_rgb(255, 255, 255), 0, 100, SCREEN_WIDTH,al_get_font_line_height(font3), 0, "2.Kazdy kamien sklada sie z dwoch pol, z kazdej strony znajduje sie na nim od 0 do 6 kropek.");
+						al_draw_multiline_text(font3, al_map_rgb(255, 255, 255), 0, 20, SCREEN_WIDTH, al_get_font_line_height(font3), 0, "1.Gra odbywa sie z uzyciem zestawu kosci domino, skladajacego sie z 28 kamieni");
+						al_draw_multiline_text(font3, al_map_rgb(255, 255, 255), 0, 100, SCREEN_WIDTH, al_get_font_line_height(font3), 0, "2.Kazdy kamien sklada sie z dwoch pol, z kazdej strony znajduje sie na nim od 0 do 6 kropek.");
 						al_draw_multiline_text(font3, al_map_rgb(255, 255, 255), 0, 180, SCREEN_WIDTH, al_get_font_line_height(font3), 0, "3.Gra zaczyna sie od wylozenia na stol jednego z kamieni (tzw. kostki) z dowolnie wybranym ukladem kropek.");
 						al_draw_multiline_text(font3, al_map_rgb(255, 255, 255), 0, 260, SCREEN_WIDTH, al_get_font_line_height(font3), 0, "4.Gracze na przemian dolaczaja do kostki kolejne kamienie, tak aby liczba kropek na jednym polu nowo dolozonej kostki byla rowna liczbie kropek na odpowiadajacym mu polu kostki lezacej na stole.");
 						al_draw_multiline_text(font3, al_map_rgb(255, 255, 255), 0, 420, SCREEN_WIDTH, al_get_font_line_height(font3), 0, "5.Jesli gracz nie moze dolozyc zadnego kamienia, przepada swoja kolejke.");
@@ -450,7 +451,7 @@ int main()
 						event.mouse.y >= 0 && event.mouse.y <= 50) {
 						// Przycisk został kliknięty
 						printf("Przycisk dziala");
-						tiles_dobrane = dodawanie_domina(tiles_dobrane, i_dobrane, nowy(80, 80, 80, 140,0), &length_dobrane);
+						tiles_dobrane = dodawanie_domina(tiles_dobrane, i_dobrane, nowy(80, 80, 80, 140, 0), &length_dobrane);
 
 						losowanie_oczek_dobrane(tiles_dobrane, ilosc_dobranych);
 						przypisanie_grafik_dobrane(tiles_dobrane, ilosc_dobranych);
@@ -599,30 +600,29 @@ int main()
 
 		case ALLEGRO_EVENT_KEY_CHAR:
 		{
-			int keycode = event.keyboard.keycode;
-			if ((keycode >= ALLEGRO_KEY_A && keycode <= ALLEGRO_KEY_Z) || keycode == ALLEGRO_KEY_SPACE) {
-				al_ustr_append_chr(username2, (char)tolower(event.keyboard.unichar));
-			}
-			else if (keycode == ALLEGRO_KEY_BACKSPACE && al_ustr_length(username2) > 0) {
-				al_ustr_remove_chr(username2, al_ustr_length(username2) - 1);
-			}
-			else if (keycode == ALLEGRO_KEY_ENTER && al_ustr_length(username2) > 0)
+			if (!menu)
 			{
-				username1 = false;
+				int keycode = event.keyboard.keycode;
+				if ((keycode >= ALLEGRO_KEY_A && keycode <= ALLEGRO_KEY_Z) || keycode == ALLEGRO_KEY_SPACE) {
+					al_ustr_append_chr(username2, (char)tolower(event.keyboard.unichar));
+				}
+				else if (keycode == ALLEGRO_KEY_BACKSPACE && al_ustr_length(username2) > 0) {
+					al_ustr_remove_chr(username2, al_ustr_length(username2) - 1);
+				}
+				else if (keycode == ALLEGRO_KEY_ENTER && al_ustr_length(username2) > 0)
+				{
+					username1 = false;
+					break;
+				}
+
+				///Sprawdzenie czy wciśnięto przycis do oborotu bloku oraz ustawienie jego statusu
+				if (event.keyboard.keycode = ALLEGRO_KEY_R)
+				{
+					key_down = true;
+				}
 				break;
 			}
-
-			///Sprawdzenie czy wciśnięto przycis do oborotu bloku oraz ustawienie jego statusu
-			if (event.keyboard.keycode = ALLEGRO_KEY_R)
-			{
-				key_down = true;
 			}
-
-			al_clear_to_color(al_map_rgb(0, 0, 0));
-			al_draw_text(font1, al_map_rgb(255, 255, 255), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 20, ALLEGRO_ALIGN_CENTRE, "Podaj nazwe uzytkownika");
-			break;
-		}
-		al_flip_display();
 		}
 
 
