@@ -291,9 +291,9 @@ int main()
 
 	ALLEGRO_EVENT event;
 
-	ALLEGRO_FONT* font1 = al_load_font("Playground.ttf", 36, 0);
-	ALLEGRO_FONT* font2 = al_load_font("Playground.ttf", 100, 0);
-	ALLEGRO_FONT* font3 = al_load_font("Playground.ttf", 40, 0);
+	ALLEGRO_FONT* font1 = al_load_font("FjallaOne.ttf", 36, 0);
+	ALLEGRO_FONT* font2 = al_load_font("FjallaOne.ttf", 100, 0);
+	ALLEGRO_FONT* font3 = al_load_font("FjallaOne.ttf", 36, 0);
 
 	bool zasady = false;
 	al_set_target_bitmap(al_get_backbuffer(display));
@@ -412,7 +412,7 @@ int main()
 			{
 				button_down = false;
 				/// Nowa gra
-				if (!zasady)
+				if (!zasady && !new_game)
 				{
 					if (event.mouse.x > SCREEN_WIDTH / 2 - 90 && event.mouse.x < SCREEN_WIDTH / 2 + 90 && event.mouse.y > SCREEN_HEIGHT / 2 - 30 && event.mouse.y < SCREEN_HEIGHT / 2 - 5)
 					{
@@ -438,28 +438,14 @@ int main()
 						//al_draw_multiline_text(font, color, x, y, maxWidth, al_get_font_line_height(font), 0, text);
 						al_draw_bitmap(background, 0, 0, 0);
 						al_draw_multiline_text(font3, al_map_rgb(255, 255, 255), 0, 20, SCREEN_WIDTH, al_get_font_line_height(font3), 0, "1.Gra odbywa sie z uzyciem zestawu kosci domino, skladajacego sie z 28 kamieni");
-						al_draw_multiline_text(font3, al_map_rgb(255, 255, 255), 0, 100, SCREEN_WIDTH, al_get_font_line_height(font3), 0, "2.Kazdy kamien sklada sie z dwoch pol, z kazdej strony znajduje sie na nim od 0 do 6 kropek.");
-						al_draw_multiline_text(font3, al_map_rgb(255, 255, 255), 0, 180, SCREEN_WIDTH, al_get_font_line_height(font3), 0, "3.Gra zaczyna sie od wylozenia na stol jednego z kamieni (tzw. kostki) z dowolnie wybranym ukladem kropek.");
-						al_draw_multiline_text(font3, al_map_rgb(255, 255, 255), 0, 260, SCREEN_WIDTH, al_get_font_line_height(font3), 0, "4.Gracze na przemian dolaczaja do kostki kolejne kamienie, tak aby liczba kropek na jednym polu nowo dolozonej kostki byla rowna liczbie kropek na odpowiadajacym mu polu kostki lezacej na stole.");
-						al_draw_multiline_text(font3, al_map_rgb(255, 255, 255), 0, 420, SCREEN_WIDTH, al_get_font_line_height(font3), 0, "5.Jesli gracz nie moze dolozyc zadnego kamienia, przepada swoja kolejke.");
-						al_draw_multiline_text(font3, al_map_rgb(255, 255, 255), 0, 500, SCREEN_WIDTH, al_get_font_line_height(font3), 0, "6.Wygrywa gracz, ktory pierwszy pozbyl sie wszystkich swoich kamieni.");
+						al_draw_multiline_text(font3, al_map_rgb(255, 255, 255), 0, 80, SCREEN_WIDTH, al_get_font_line_height(font3), 0, "2.Kazdy kamien sklada sie z dwoch pol, z kazdej strony znajduje sie na nim od 0 do 6 kropek.");
+						al_draw_multiline_text(font3, al_map_rgb(255, 255, 255), 0, 140, SCREEN_WIDTH, al_get_font_line_height(font3), 0, "3.Gra zaczyna sie od wylozenia na stol jednego z kamieni (tzw. kostki) z dowolnie wybranym ukladem kropek.");
+						al_draw_multiline_text(font3, al_map_rgb(255, 255, 255), 0, 240, SCREEN_WIDTH, al_get_font_line_height(font3), 0, "4.Gracze na przemian dolaczaja do kostki kolejne kamienie, tak aby liczba kropek na jednym polu nowo dolozonej kostki byla rowna liczbie kropek na odpowiadajacym mu polu kostki lezacej na stole.");
+						al_draw_multiline_text(font3, al_map_rgb(255, 255, 255), 0, 380, SCREEN_WIDTH, al_get_font_line_height(font3), 0, "5.Jesli gracz nie moze dolozyc zadnego kamienia, przepada swoja kolejke.");
+						al_draw_multiline_text(font3, al_map_rgb(255, 255, 255), 0, 440, SCREEN_WIDTH, al_get_font_line_height(font3), 0, "6.Wygrywa gracz, ktory pierwszy pozbyl sie wszystkich swoich kamieni.");
 						al_draw_text(font1, al_map_rgb(255, 255, 255), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 400, ALLEGRO_ALIGN_CENTRE, "Powrot");
 
 					}
-
-					if (button_pressed && event.mouse.x >= 0 && event.mouse.x <= 430 &&
-						event.mouse.y >= 0 && event.mouse.y <= 50) {
-						// Przycisk został kliknięty
-						printf("Przycisk dziala");
-						tiles_dobrane = dodawanie_domina(tiles_dobrane, i_dobrane, nowy(80, 80, 80, 140, 0), &length_dobrane);
-
-						losowanie_oczek_dobrane(tiles_dobrane, ilosc_dobranych);
-						przypisanie_grafik_dobrane(tiles_dobrane, ilosc_dobranych);
-						i_dobrane++;
-						ilosc_dobranych++;
-						break;
-					}
-					button_pressed = false;
 
 				}
 				else if (zasady)
@@ -473,7 +459,23 @@ int main()
 					}
 				}
 			}
-			break;
+			if (new_game)
+			{
+				if (button_pressed && event.mouse.x >= 0 && event.mouse.x <= 430 &&
+					event.mouse.y >= 0 && event.mouse.y <= 50) {
+					// Przycisk został kliknięty
+					printf("Przycisk dziala");
+					tiles_dobrane = dodawanie_domina(tiles_dobrane, i_dobrane, nowy(80, 80, 80, 140, 0), &length_dobrane);
+
+					losowanie_oczek_dobrane(tiles_dobrane, ilosc_dobranych);
+					przypisanie_grafik_dobrane(tiles_dobrane, ilosc_dobranych);
+					i_dobrane++;
+					ilosc_dobranych++;
+					break;
+				}
+				button_pressed = false;
+				break;
+			}
 
 		case ALLEGRO_EVENT_MOUSE_AXES:
 
