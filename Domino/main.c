@@ -182,10 +182,8 @@ void wyswietlanie_domino(Tile** tiles, int ilosc_domino)
 		}
 		else
 		{
-
-			al_draw_rotated_bitmap(tiles[i]->lewo, TILE_SIZE / 2, TILE_SIZE, tiles[i]->l_x + TILE_SIZE / 2, tiles[i]->p_y, tiles[i]->rotation_degree * 3.14159 / 180, 0);
-			al_draw_rotated_bitmap(tiles[i]->prawo, TILE_SIZE / 2, 0, tiles[i]->p_x + TILE_SIZE / 2, tiles[i]->p_y, tiles[i]->rotation_degree * 3.14159 / 180, 0);
-
+			al_draw_bitmap(tiles[i]->lewo, tiles[i]->l_x, tiles[i]->l_y, 0);
+			al_draw_bitmap(tiles[i]->prawo, tiles[i]->p_x, tiles[i]->p_y, 0);
 		}
 
 	}
@@ -241,6 +239,133 @@ void print_array(Tile** array, const unsigned int number_of_values)
 		}
 		puts("");
 	}
+}
+
+
+bool collision(Tile* domino_r, Tile** tiles, int ilosc_domino, int domino_i)
+{
+
+
+	for (int i = 0; i < ilosc_domino; i++)
+	{
+		if (domino_i != i)
+		{
+			if (domino_r->rotation_degree == 0)
+			{
+				if (domino_r->l_x + TILE_SIZE < tiles[i]->l_x ||
+					domino_r->l_x > tiles[i]->l_x + TILE_SIZE ||
+					domino_r->l_y + (2 * TILE_SIZE) < tiles[i]->l_y ||
+					domino_r->l_y > tiles[i]->l_y + (2 * TILE_SIZE) ||
+					domino_r->p_x + TILE_SIZE < tiles[i]->p_x ||
+					domino_r->p_x > tiles[i]->p_x + TILE_SIZE ||
+					domino_r->p_y + (2 * TILE_SIZE) < tiles[i]->p_y ||
+					domino_r->p_y > tiles[i]->p_y + (2 * TILE_SIZE))
+				{
+					///Brak kolizji
+				}
+				else
+				{
+					///Kolizja
+
+					printf("Kolizja\n");
+				}
+			}
+			else if (domino_r->rotation_degree == 90)
+			{
+				if (domino_r->p_x + (2 * TILE_SIZE) < tiles[i]->l_x ||
+					domino_r->p_x > tiles[i]->l_x + TILE_SIZE ||
+					domino_r->p_y + (2 * TILE_SIZE) < tiles[i]->l_y ||
+					domino_r->p_y > tiles[i]->l_y + (2 * TILE_SIZE) ||
+					domino_r->l_x + TILE_SIZE < tiles[i]->p_x ||
+					domino_r->l_x > tiles[i]->p_x + (2 * TILE_SIZE) ||
+					domino_r->l_y + (2 * TILE_SIZE) < tiles[i]->p_y ||
+					domino_r->l_y > tiles[i]->p_y + (2 * TILE_SIZE))
+				{
+					///Brak kolizji
+				}
+				else
+				{
+					///Kolizja
+
+					printf("Kolizja\n");
+				}
+			}
+			else if (domino_r->rotation_degree == 180)
+			{
+				if (domino_r->p_x + TILE_SIZE < tiles[i]->l_x ||
+					domino_r->p_x > tiles[i]->l_x + TILE_SIZE ||
+					domino_r->p_y + (2 * TILE_SIZE) < tiles[i]->l_y ||
+					domino_r->p_y > tiles[i]->l_y + (2 * TILE_SIZE) ||
+					domino_r->l_x + TILE_SIZE < tiles[i]->p_x ||
+					domino_r->l_x > tiles[i]->p_x + TILE_SIZE ||
+					domino_r->l_y + (2 * TILE_SIZE) < tiles[i]->p_y ||
+					domino_r->l_y > tiles[i]->p_y + (2 * TILE_SIZE))
+				{
+					///Brak kolizji
+				}
+				else
+				{
+					///Kolizja
+
+					printf("Kolizja\n");
+				}
+			}
+			else if (domino_r->rotation_degree == 270)
+			{
+				if (domino_r->l_x + (2 * TILE_SIZE) < tiles[i]->l_x ||
+					domino_r->l_x > tiles[i]->l_x + TILE_SIZE ||
+					domino_r->l_y + (2 * TILE_SIZE) < tiles[i]->l_y ||
+					domino_r->l_y > tiles[i]->l_y + (2 * TILE_SIZE) ||
+					domino_r->p_x + TILE_SIZE < tiles[i]->p_x ||
+					domino_r->p_x > tiles[i]->p_x + (2 * TILE_SIZE) ||
+					domino_r->p_y + (2 * TILE_SIZE) < tiles[i]->p_y ||
+					domino_r->p_y > tiles[i]->p_y + (2 * TILE_SIZE))
+				{
+					///Brak kolizji
+				}
+				else
+				{
+					///Kolizja
+
+					printf("Kolizja\n");
+				}
+			}
+		}
+
+	}
+
+
+
+
+}
+
+void obracanie(Tile* current)
+{
+	current->rotation_degree += 90;
+	if (current->rotation_degree == 90)
+	{
+		current->l_x += TILE_SIZE;
+		current->l_y += TILE_SIZE;
+	}
+	else if (current->rotation_degree == 180)
+	{
+		current->l_x -= TILE_SIZE;
+		current->l_y += TILE_SIZE;
+	}
+	else if (current->rotation_degree == 270)
+	{
+		current->l_x -= TILE_SIZE;
+		current->l_y -= TILE_SIZE;
+	}
+	else if (current->rotation_degree == 360)
+	{
+		current->l_x += TILE_SIZE;
+		current->l_y -= TILE_SIZE;
+		current->rotation_degree = 0;
+	}
+
+
+
 }
 
 
@@ -504,9 +629,9 @@ int main()
 			{
 				for (int i = 1; i < ilosc_domino; i++)
 				{
+					collision(tiles[i], tiles, ilosc_domino, i);
 
-
-					if (tiles[i]->rotation_degree == 0 || tiles[i]->rotation_degree == 180)
+					if (tiles[i]->rotation_degree == 0 || tiles[i]->rotation_degree == 270)
 					{
 						if (event.mouse.x >= tiles[i]->l_x && event.mouse.x <= tiles[i]->p_x + TILE_SIZE)
 							if (event.mouse.y >= tiles[i]->l_y && event.mouse.y <= tiles[i]->p_y + TILE_SIZE)
@@ -524,9 +649,7 @@ int main()
 								///Obracanie domino
 								if (key_down)
 								{
-									tiles[i]->rotation_degree += 90;
-									if (tiles[i]->rotation_degree >= 360)
-										tiles[i]->rotation_degree = 0;
+									obracanie(tiles[i]);
 									key_down = false;
 								}
 
@@ -534,8 +657,8 @@ int main()
 					}
 					else
 					{
-						if (event.mouse.x >= tiles[i]->l_x - 30 && event.mouse.x <= tiles[i]->p_x + 90)
-							if (event.mouse.y >= tiles[i]->l_y + 30 && event.mouse.y <= tiles[i]->p_y + 30)
+						if (event.mouse.x >= tiles[i]->p_x && event.mouse.x <= tiles[i]->l_x + TILE_SIZE)
+							if (event.mouse.y >= tiles[i]->p_y && event.mouse.y <= tiles[i]->l_y + TILE_SIZE)
 							{
 								tiles[i]->l_x = tiles[i]->l_x + event.mouse.x - mouse_x;
 								tiles[i]->l_y = tiles[i]->l_y + event.mouse.y - mouse_y;
@@ -549,9 +672,7 @@ int main()
 								///Obracanie domino
 								if (key_down)
 								{
-									tiles[i]->rotation_degree += 90;
-									if (tiles[i]->rotation_degree >= 360)
-										tiles[i]->rotation_degree = 0;
+									obracanie(tiles[i]);
 									key_down = false;
 								}
 							}
@@ -582,17 +703,15 @@ int main()
 							///Obracanie domino
 							if (key_down)
 							{
-								tiles_dobrane[i]->rotation_degree += 90;
-								if (tiles_dobrane[i]->rotation_degree >= 360)
-									tiles_dobrane[i]->rotation_degree = 0;
+								obracanie(tiles[i]);
 								key_down = false;
 							}
 
 						}
 						else
 						{
-							if (event.mouse.x >= tiles_dobrane[i]->l_x - 30 && event.mouse.x <= tiles_dobrane[i]->p_x + 90)
-								if (event.mouse.y >= tiles_dobrane[i]->l_y + 30 && event.mouse.y <= tiles_dobrane[i]->p_y + 30)
+							if (event.mouse.x >= tiles[i]->p_x && event.mouse.x <= tiles[i]->l_x + TILE_SIZE)
+								if (event.mouse.y >= tiles[i]->p_y && event.mouse.y <= tiles[i]->l_y + TILE_SIZE)
 								{
 									tiles_dobrane[i]->l_x = tiles_dobrane[i]->l_x + event.mouse.x - mouse_x;
 									tiles_dobrane[i]->l_y = tiles_dobrane[i]->l_y + event.mouse.y - mouse_y;
@@ -606,9 +725,7 @@ int main()
 									///Obracanie domino
 									if (key_down)
 									{
-										tiles_dobrane[i]->rotation_degree += 90;
-										if (tiles_dobrane[i]->rotation_degree >= 360)
-											tiles_dobrane[i]->rotation_degree = 0;
+										obracanie(tiles[i]);
 										key_down = false;
 									}
 								}
