@@ -29,6 +29,17 @@ struct Tile {
 
 };
 
+struct Player
+{
+	Tile** domino_gracza;
+	int ilosc_domino;
+	unsigned int length;
+	int start_x ;
+
+};
+
+typedef struct Player Player;
+
 //losowanie liczby oczek klocka startowegoa
 void losowanie_oczek(struct Tile** tiles, int ilosc_domino) {
 
@@ -189,6 +200,8 @@ void wyswietlanie_domino(Tile** tiles, int ilosc_domino)
 	}
 }
 
+
+
 /// Tworzenie nowych bloków domina
 Tile* nowy(int l_x, int l_y, int p_x, int p_y, float rotation_degree)
 {
@@ -242,9 +255,12 @@ void print_array(Tile** array, const unsigned int number_of_values)
 }
 
 
-bool collision(Tile* domino_r, Tile** tiles, int ilosc_domino, int domino_i)
+int collision(Tile* domino_r, Tile** tiles, int ilosc_domino, int domino_i)
 {
-
+	int prawy_z_lewym = 0; // to samo samo przesuwanie
+	int lewy_z_prawym = 1;
+	int gora_z_dolem = 2;
+	int dol_z_gora = 3; // to samo przesuwanie
 
 	for (int i = 0; i < ilosc_domino; i++)
 	{
@@ -252,10 +268,10 @@ bool collision(Tile* domino_r, Tile** tiles, int ilosc_domino, int domino_i)
 		{
 			if (domino_r->rotation_degree == 0)
 			{
-				if (domino_r->l_x + TILE_SIZE < tiles[i]->l_x ||
-					domino_r->l_x > tiles[i]->l_x + TILE_SIZE ||
-					domino_r->l_y + (2 * TILE_SIZE) < tiles[i]->l_y ||
-					domino_r->l_y > tiles[i]->l_y + (2 * TILE_SIZE) ||
+				if (domino_r->l_x + TILE_SIZE < tiles[i]->l_x || // prawo z lewy 
+					domino_r->l_x > tiles[i]->l_x + TILE_SIZE || // lewo z prawym
+					domino_r->l_y + (2 * TILE_SIZE) < tiles[i]->l_y || // dół z górą
+					domino_r->l_y > tiles[i]->l_y + (2 * TILE_SIZE) || // góra z dołem
 					domino_r->p_x + TILE_SIZE < tiles[i]->p_x ||
 					domino_r->p_x > tiles[i]->p_x + TILE_SIZE ||
 					domino_r->p_y + (2 * TILE_SIZE) < tiles[i]->p_y ||
@@ -267,15 +283,35 @@ bool collision(Tile* domino_r, Tile** tiles, int ilosc_domino, int domino_i)
 				{
 					///Kolizja
 
-					printf("Kolizja\n");
+					if (domino_r->l_x >= tiles[i]->l_x + TILE_SIZE && domino_r->p_x >= tiles[i]->p_x + TILE_SIZE)
+					{
+						printf("LEWO Z PRAWYM\n");
+						return lewy_z_prawym;
+					}
+					else if (domino_r->l_x + TILE_SIZE <= tiles[i]->l_x && domino_r->p_x + TILE_SIZE <= tiles[i]->p_x)
+					{
+						printf("PRAWY Z LEWYM \n");
+						return prawy_z_lewym;
+					}
+					else if (domino_r->l_y + (2 * TILE_SIZE) <= tiles[i]->l_y && domino_r->p_y + (2 * TILE_SIZE) <= tiles[i]->p_y)
+					{
+						printf("DOL Z GORA \n");
+						return dol_z_gora;
+					}
+					else if (domino_r->l_y >= tiles[i]->l_y + (2 * TILE_SIZE) && domino_r->p_y >= tiles[i]->p_y + (2 * TILE_SIZE))
+					{
+						printf("GORA Z DOEM \n");
+						return gora_z_dolem;
+					}
+
 				}
 			}
 			else if (domino_r->rotation_degree == 90)
 			{
-				if (domino_r->p_x + (2 * TILE_SIZE) < tiles[i]->l_x ||
-					domino_r->p_x > tiles[i]->l_x + TILE_SIZE ||
-					domino_r->p_y + (2 * TILE_SIZE) < tiles[i]->l_y ||
-					domino_r->p_y > tiles[i]->l_y + (2 * TILE_SIZE) ||
+				if (domino_r->p_x + (2 * TILE_SIZE) < tiles[i]->l_x || // prawo z lewym
+					domino_r->p_x > tiles[i]->l_x + TILE_SIZE || // lewo z prawym
+					domino_r->p_y + (2 * TILE_SIZE) < tiles[i]->l_y || // dół z górą
+					domino_r->p_y > tiles[i]->l_y + (2 * TILE_SIZE) || // góra z dołem
 					domino_r->l_x + TILE_SIZE < tiles[i]->p_x ||
 					domino_r->l_x > tiles[i]->p_x + (2 * TILE_SIZE) ||
 					domino_r->l_y + (2 * TILE_SIZE) < tiles[i]->p_y ||
@@ -286,16 +322,35 @@ bool collision(Tile* domino_r, Tile** tiles, int ilosc_domino, int domino_i)
 				else
 				{
 					///Kolizja
-
+					if (domino_r->p_x >= tiles[i]->l_x + TILE_SIZE && domino_r->l_x >= tiles[i]->p_x + (2 * TILE_SIZE))
+					{
+						printf("LEWO Z PRAWYM\n");
+						return lewy_z_prawym;
+					}
+					else if (domino_r->p_x + (2 * TILE_SIZE) <= tiles[i]->l_x && domino_r->l_x + TILE_SIZE <= tiles[i]->p_x)
+					{
+						printf("PRAWY Z LEWYM \n");
+						return prawy_z_lewym;
+					}
+					else if (domino_r->p_y + (2 * TILE_SIZE) <= tiles[i]->l_y && domino_r->l_y + (2 * TILE_SIZE) <= tiles[i]->p_y)
+					{
+						printf("DOL Z GORA \n");
+						return dol_z_gora;
+					}
+					else if (domino_r->p_y >= tiles[i]->l_y + (2 * TILE_SIZE) && domino_r->l_y >= tiles[i]->p_y + (2 * TILE_SIZE))
+					{
+						printf("GORA Z DOEM \n");
+						return gora_z_dolem;
+					}
 					printf("Kolizja\n");
 				}
 			}
 			else if (domino_r->rotation_degree == 180)
 			{
-				if (domino_r->p_x + TILE_SIZE < tiles[i]->l_x ||
-					domino_r->p_x > tiles[i]->l_x + TILE_SIZE ||
-					domino_r->p_y + (2 * TILE_SIZE) < tiles[i]->l_y ||
-					domino_r->p_y > tiles[i]->l_y + (2 * TILE_SIZE) ||
+				if (domino_r->p_x + TILE_SIZE < tiles[i]->l_x || // prawo z lewy 
+					domino_r->p_x > tiles[i]->l_x + TILE_SIZE || // lewo z prawym
+					domino_r->p_y + (2 * TILE_SIZE) < tiles[i]->l_y || // dół z górą
+					domino_r->p_y > tiles[i]->l_y + (2 * TILE_SIZE) || // góra z dołem
 					domino_r->l_x + TILE_SIZE < tiles[i]->p_x ||
 					domino_r->l_x > tiles[i]->p_x + TILE_SIZE ||
 					domino_r->l_y + (2 * TILE_SIZE) < tiles[i]->p_y ||
@@ -306,16 +361,35 @@ bool collision(Tile* domino_r, Tile** tiles, int ilosc_domino, int domino_i)
 				else
 				{
 					///Kolizja
-
+					if (domino_r->p_x >= tiles[i]->l_x + TILE_SIZE && domino_r->l_x > tiles[i]->p_x + TILE_SIZE)
+					{
+						printf("LEWO Z PRAWYM\n");
+						return lewy_z_prawym;
+					}
+					else if (domino_r->p_x + TILE_SIZE <= tiles[i]->l_x && domino_r->l_x + TILE_SIZE <= tiles[i]->p_x)
+					{
+						printf("PRAWY Z LEWYM \n");
+						return prawy_z_lewym;
+					}
+					else if (domino_r->p_y + (2 * TILE_SIZE) <= tiles[i]->l_y && domino_r->l_y + (2 * TILE_SIZE) <= tiles[i]->p_y)
+					{
+						printf("DOL Z GORA \n");
+						return dol_z_gora;
+					}
+					else if (domino_r->p_y >= tiles[i]->l_y + (2 * TILE_SIZE) && domino_r->l_y > tiles[i]->p_y + (2 * TILE_SIZE))
+					{
+						printf("GORA Z DOEM \n");
+						return gora_z_dolem;
+					}
 					printf("Kolizja\n");
 				}
 			}
 			else if (domino_r->rotation_degree == 270)
 			{
-				if (domino_r->l_x + (2 * TILE_SIZE) < tiles[i]->l_x ||
-					domino_r->l_x > tiles[i]->l_x + TILE_SIZE ||
-					domino_r->l_y + (2 * TILE_SIZE) < tiles[i]->l_y ||
-					domino_r->l_y > tiles[i]->l_y + (2 * TILE_SIZE) ||
+				if (domino_r->l_x + (2 * TILE_SIZE) < tiles[i]->l_x || // prawo z lewy 
+					domino_r->l_x > tiles[i]->l_x + TILE_SIZE || // lewo z prawym
+					domino_r->l_y + (2 * TILE_SIZE) < tiles[i]->l_y ||  // dół z górą
+					domino_r->l_y > tiles[i]->l_y + (2 * TILE_SIZE) ||  // góra z dołem
 					domino_r->p_x + TILE_SIZE < tiles[i]->p_x ||
 					domino_r->p_x > tiles[i]->p_x + (2 * TILE_SIZE) ||
 					domino_r->p_y + (2 * TILE_SIZE) < tiles[i]->p_y ||
@@ -326,7 +400,26 @@ bool collision(Tile* domino_r, Tile** tiles, int ilosc_domino, int domino_i)
 				else
 				{
 					///Kolizja
-
+					if (domino_r->l_x >= tiles[i]->l_x + TILE_SIZE && domino_r->p_x >= tiles[i]->p_x + (2 * TILE_SIZE))
+					{
+						printf("LEWO Z PRAWYM\n");
+						return lewy_z_prawym;
+					}
+					else if (domino_r->l_x + (2 * TILE_SIZE) <= tiles[i]->l_x && domino_r->p_x + TILE_SIZE <= tiles[i]->p_x)
+					{
+						printf("PRAWY Z LEWYM \n");
+						return prawy_z_lewym;
+					}
+					else if (domino_r->l_y + (2 * TILE_SIZE) <= tiles[i]->l_y && domino_r->p_y + (2 * TILE_SIZE) <= tiles[i]->p_y)
+					{
+						printf("DOL Z GORA \n");
+						return dol_z_gora;
+					}
+					else if (domino_r->l_y >= tiles[i]->l_y + (2 * TILE_SIZE) && domino_r->p_y >= tiles[i]->p_y + (2 * TILE_SIZE))
+					{
+						printf("GORA Z DOEM \n");
+						return gora_z_dolem;
+					}
 					printf("Kolizja\n");
 				}
 			}
@@ -334,7 +427,7 @@ bool collision(Tile* domino_r, Tile** tiles, int ilosc_domino, int domino_i)
 
 	}
 
-
+	return -1;
 
 
 }
@@ -367,6 +460,414 @@ void obracanie(Tile* current)
 
 
 }
+
+
+
+void poruszanie(Tile** tiles, int ilosc_domino, ALLEGRO_EVENT* event, bool* key_down, int* mouse_x, int* mouse_y,int *current)
+{
+	for (int i = 0; i < ilosc_domino; i++)
+	{
+
+		if (tiles[i]->rotation_degree == 0 || tiles[i]->rotation_degree == 270)
+		{
+		
+			if (event->mouse.x >= tiles[i]->l_x && event->mouse.x <= tiles[i]->p_x + TILE_SIZE)
+				if (event->mouse.y >= tiles[i]->l_y && event->mouse.y <= tiles[i]->p_y + TILE_SIZE)
+				{
+					*current = i;
+
+					int collision_check = collision(tiles[i], tiles, ilosc_domino, i);
+					if (collision_check == 0) //prawa sciana z lewą
+					{
+						tiles[i]->l_x = tiles[i]->l_x - event->mouse.x + *mouse_x - 1;
+						tiles[i]->l_y = tiles[i]->l_y + event->mouse.y - *mouse_y;
+
+						tiles[i]->p_x = tiles[i]->p_x - event->mouse.x + *mouse_x - 1;
+						tiles[i]->p_y = tiles[i]->p_y + event->mouse.y - *mouse_y;
+
+
+						*mouse_x = event->mouse.x;
+						*mouse_y = event->mouse.y;
+						
+					}
+					else if (collision_check == 1) //lewa sciana z prawą
+					{
+						tiles[i]->l_x = tiles[i]->l_x + event->mouse.x - *mouse_x + 1;
+						tiles[i]->l_y = tiles[i]->l_y + event->mouse.y - *mouse_y;
+
+						tiles[i]->p_x = tiles[i]->p_x + event->mouse.x - *mouse_x + 1;
+						tiles[i]->p_y = tiles[i]->p_y + event->mouse.y - *mouse_y;
+
+
+						*mouse_x = event->mouse.x;
+						*mouse_y = event->mouse.y;
+					}
+					else if (collision_check == 2) // gorna ściana z dolną 
+					{
+
+						tiles[i]->l_x = tiles[i]->l_x + event->mouse.x - *mouse_x;
+						tiles[i]->l_y = tiles[i]->l_y + event->mouse.y - *mouse_y + 1;
+
+						tiles[i]->p_x = tiles[i]->p_x + event->mouse.x - *mouse_x;
+						tiles[i]->p_y = tiles[i]->p_y + event->mouse.y - *mouse_y + 1;
+
+						*mouse_x = event->mouse.x;
+						*mouse_y = event->mouse.y;
+					}
+					else if (collision_check == 3) // dolna z gorną
+					{
+						tiles[i]->l_x = tiles[i]->l_x + event->mouse.x - *mouse_x;
+						tiles[i]->l_y = tiles[i]->l_y - event->mouse.y + *mouse_y - 1;
+
+						tiles[i]->p_x = tiles[i]->p_x + event->mouse.x - *mouse_x;
+						tiles[i]->p_y = tiles[i]->p_y - event->mouse.y + *mouse_y - 1;
+
+						*mouse_x = event->mouse.x;
+						*mouse_y = event->mouse.y;
+
+					}
+					else
+					{
+						tiles[i]->l_x = tiles[i]->l_x + event->mouse.x - *mouse_x;
+						tiles[i]->l_y = tiles[i]->l_y + event->mouse.y - *mouse_y;
+
+						tiles[i]->p_x = tiles[i]->p_x + event->mouse.x - *mouse_x;
+						tiles[i]->p_y = tiles[i]->p_y + event->mouse.y - *mouse_y;
+
+						*mouse_x = event->mouse.x;
+						*mouse_y = event->mouse.y;
+					}
+
+				
+
+
+
+					//collision(current_selected_tile.l_x, current_selected_tile.l_y, tiles[i]->l_x, tiles[i]->l_y, 60, 120);
+					//printf("%d", current_selected_tile.ilosc_oczek_lewo);
+					//current_selected_tile = tiles[i];
+
+					///Obracanie domino
+					if (*key_down)
+					{
+						obracanie(tiles[i]);
+						*key_down = false;
+
+						printf("ilosc oczek lewo %d \n", tiles[i]->ilosc_oczek_lewo);
+						printf("l_x %d \n", tiles[i]->l_x);
+						printf("l_y %d \n", tiles[i]->l_y);
+						printf("p_x %d \n", tiles[i]->p_x);
+						printf("p_y %d \n", tiles[i]->p_y);
+					}
+
+				}
+		}
+		else
+		{
+			
+			if (event->mouse.x >= tiles[i]->p_x && event->mouse.x <= tiles[i]->l_x + TILE_SIZE)
+				if (event->mouse.y >= tiles[i]->p_y && event->mouse.y <= tiles[i]->l_y + TILE_SIZE)
+				{
+					*current = i;
+					int collision_check = collision(tiles[i], tiles, ilosc_domino, i);
+					if (collision_check == 0) //prawa sciana z lewą
+					{
+						tiles[i]->l_x = tiles[i]->l_x - event->mouse.x + *mouse_x - 1;
+						tiles[i]->l_y = tiles[i]->l_y + event->mouse.y - *mouse_y;
+
+						tiles[i]->p_x = tiles[i]->p_x - event->mouse.x + *mouse_x - 1;
+						tiles[i]->p_y = tiles[i]->p_y + event->mouse.y - *mouse_y;
+
+
+						*mouse_x = event->mouse.x;
+						*mouse_y = event->mouse.y;
+					}
+					else if (collision_check == 1) //lewa sciana z prawą
+					{
+						tiles[i]->l_x = tiles[i]->l_x + event->mouse.x - *mouse_x + 1;
+						tiles[i]->l_y = tiles[i]->l_y + event->mouse.y - *mouse_y;
+
+						tiles[i]->p_x = tiles[i]->p_x + event->mouse.x - *mouse_x + 1;
+						tiles[i]->p_y = tiles[i]->p_y + event->mouse.y - *mouse_y;
+
+
+						*mouse_x = event->mouse.x;
+						*mouse_y = event->mouse.y;
+					}
+					else if (collision_check == 2) // gorna ściana z dolną 
+					{
+
+						tiles[i]->l_x = tiles[i]->l_x + event->mouse.x - *mouse_x;
+						tiles[i]->l_y = tiles[i]->l_y + event->mouse.y - *mouse_y + 1;
+
+						tiles[i]->p_x = tiles[i]->p_x + event->mouse.x - *mouse_x;
+						tiles[i]->p_y = tiles[i]->p_y + event->mouse.y - *mouse_y + 1;
+
+						*mouse_x = event->mouse.x;
+						*mouse_y = event->mouse.y;
+					}
+					else if (collision_check == 3) // dolna z gorną
+					{
+						tiles[i]->l_x = tiles[i]->l_x + event->mouse.x - *mouse_x;
+						tiles[i]->l_y = tiles[i]->l_y - event->mouse.y + *mouse_y - 1;
+
+						tiles[i]->p_x = tiles[i]->p_x + event->mouse.x - *mouse_x;
+						tiles[i]->p_y = tiles[i]->p_y - event->mouse.y + *mouse_y - 1;
+
+						*mouse_x = event->mouse.x;
+						*mouse_y = event->mouse.y;
+
+					}
+					else
+					{
+						tiles[i]->l_x = tiles[i]->l_x + event->mouse.x - *mouse_x;
+						tiles[i]->l_y = tiles[i]->l_y + event->mouse.y - *mouse_y;
+
+						tiles[i]->p_x = tiles[i]->p_x + event->mouse.x - *mouse_x;
+						tiles[i]->p_y = tiles[i]->p_y + event->mouse.y - *mouse_y;
+
+						*mouse_x = event->mouse.x;
+						*mouse_y = event->mouse.y;
+					}
+					if (*key_down)
+					{
+						obracanie(tiles[i]);
+						*key_down = false;
+
+						printf("ilosc oczek lewo %d \n", tiles[i]->ilosc_oczek_lewo);
+						printf("l_x %d \n", tiles[i]->l_x);
+						printf("l_y %d \n", tiles[i]->l_y);
+						printf("p_x %d \n", tiles[i]->p_x);
+						printf("p_y %d \n", tiles[i]->p_y);
+					}
+				}
+		}
+
+	}
+}
+
+
+void creating_players_domino(Player* gracz)
+{
+	gracz->ilosc_domino = 8;
+	gracz->domino_gracza = NULL;
+	gracz->length = 0;
+	gracz->start_x = 290;
+	int y_pos = SCREEN_HEIGHT - 200;
+	int y2_pos = SCREEN_HEIGHT - 200 + TILE_SIZE;
+
+	for (int i = 0; i < gracz->ilosc_domino; i++)
+	{
+		if (i == 0)
+		{
+			gracz->domino_gracza = dodawanie_domina(gracz->domino_gracza, i, nowy(gracz->start_x, y_pos, gracz->start_x, y2_pos, 0), &gracz->length);
+		}
+		else
+		{
+			gracz->domino_gracza = dodawanie_domina(gracz->domino_gracza, i, nowy(gracz->domino_gracza[i - 1]->l_x + 100, y_pos, gracz->domino_gracza[i - 1]->l_x + 100, y2_pos, 0), &gracz->length);
+		}
+		
+	}
+	losowanie_oczek(gracz->domino_gracza, gracz->ilosc_domino);
+	przypisanie_grafik(gracz->domino_gracza, gracz->ilosc_domino);
+	print_array(gracz->domino_gracza, gracz->ilosc_domino);
+}
+
+struct Tiles_Placed
+{
+	int l_x;
+	int l_y;
+
+};
+
+
+typedef struct Tiles_Placed Tiles_Placed;
+
+Tiles_Placed* placing_domino()
+{
+	const int rows = 12;
+	const int columns = 20;
+
+	int x = 20;
+	int y = 20;
+
+	Tiles_Placed* board = malloc(rows * columns * sizeof(Tiles_Placed));
+	if (board == NULL)
+	{
+		// Obsłuż błąd alokacji pamięci
+		return NULL;
+	}
+
+	for (int i = 0; i < rows; i++)
+	{
+		for (int j = 0; j < columns; j++)
+		{
+			int index = i * columns + j;
+
+			board[index].l_x = x;
+			board[index].l_y = y;
+
+			x += 60;
+		}
+		y += 60;
+		x = 20;
+	}
+	return board;
+}
+
+
+void wyswietlanie_lini(Tiles_Placed board[12][20])
+{
+	for (int i = 0; i < 12; i++)
+	{
+		for (int j = 0; j < 20; j++)
+		{
+
+			al_draw_filled_circle(board[i][j].l_x, board[i][j].l_y, 3, al_map_rgb(255, 0, 0));
+
+		}
+	}
+}
+
+void tab_board_wys(Tiles_Placed board[12][20])
+{
+	for (int i = 0; i < 12; i++)
+	{
+		for (int j = 0; j < 20; j++)
+		{
+			printf("i = %d j = %d WYNIK = %d \n", i, j, board[i][j].l_x);
+
+
+		}
+	}
+}
+
+
+void placing(Tile* current, Tiles_Placed board[][20])
+{
+
+	for (int i = 0; i < 12; i++)
+	{
+		bool found = false;
+		for (int j = 0; j < 20; j++)
+		{
+			if (current->rotation_degree == 0)
+			{
+				if (current->l_x + TILE_SIZE < board[i][j].l_x ||
+					current->l_x > board[i][j].l_x + TILE_SIZE ||
+					current->l_y + (2 * TILE_SIZE) < board[i][j].l_y ||
+					current->l_y > board[i][j].l_y + (2 * TILE_SIZE) ||
+					current->p_x + TILE_SIZE < board[i][j].l_x ||
+					current->p_x > board[i][j].l_x + TILE_SIZE ||
+					current->p_y + (2 * TILE_SIZE) < board[i][j].l_y ||
+					current->p_y > board[i][j].l_y + (2 * TILE_SIZE))
+				{
+
+				}
+				else
+				{
+					if (i != 11)
+					{
+						current->l_x = board[i][j].l_x;
+						current->l_y = board[i][j].l_y;
+						current->p_x = board[i + 1][j].l_x;
+						current->p_y = board[i + 1][j].l_y;
+						found = true;
+						break;
+					}
+
+				}
+			}
+			else if (current->rotation_degree == 90)
+			{
+				if (current->p_x + (2 * TILE_SIZE) < board[i][j].l_x || // prawo z lewym
+					current->p_x > board[i][j].l_x + TILE_SIZE || // lewo z prawym
+					current->p_y + (2 * TILE_SIZE) < board[i][j].l_y || // dół z górą
+					current->p_y > board[i][j].l_y + (2 * TILE_SIZE) || // góra z dołem
+					current->l_x + TILE_SIZE < board[i][j].l_x ||
+					current->l_x > board[i][j].l_x + (2 * TILE_SIZE) ||
+					current->l_y + (2 * TILE_SIZE) < board[i][j].l_y ||
+					current->l_y > board[i][j].l_y + (2 * TILE_SIZE))
+				{
+
+				}
+				else
+				{
+					if (j != 19 && i != 11)
+					{
+						current->l_x = board[i + 1][j + 1].l_x;
+						current->l_y = board[i + 1][j + 1].l_y;
+						current->p_x = board[i + 1][j].l_x;
+						current->p_y = board[i + 1][j].l_y;
+						found = true;
+						break;
+					}
+
+				}
+			}
+			else if (current->rotation_degree == 180)
+			{
+				if (current->p_x + TILE_SIZE < board[i][j].l_x || // prawo z lewy 
+					current->p_x > board[i][j].l_x + TILE_SIZE || // lewo z prawym
+					current->p_y + (2 * TILE_SIZE) < board[i][j].l_y || // dół z górą
+					current->p_y > board[i][j].l_y + (2 * TILE_SIZE) || // góra z dołem
+					current->l_x + TILE_SIZE < board[i][j].l_x ||
+					current->l_x >board[i][j].l_x + TILE_SIZE ||
+					current->l_y + (2 * TILE_SIZE) < board[i][j].l_y ||
+					current->l_y > board[i][j].l_y + (2 * TILE_SIZE))
+				{
+
+				}
+				else
+				{
+					if (i != 11)
+					{
+						current->l_x = board[i + 1][j].l_x;
+						current->l_y = board[i + 1][j].l_y;
+						current->p_x = board[i][j].l_x;
+						current->p_y = board[i][j].l_y;
+						found = true;
+						break;
+					}
+
+				}
+			}
+			else if (current->rotation_degree == 270)
+			{
+				if (current->l_x + (2 * TILE_SIZE) < board[i][j].l_x || // prawo z lewy 
+					current->l_x > board[i][j].l_x + TILE_SIZE || // lewo z prawym
+					current->l_y + (2 * TILE_SIZE) < board[i][j].l_y ||  // dół z górą
+					current->l_y > board[i][j].l_y + (2 * TILE_SIZE) ||  // góra z dołem
+					current->p_x + TILE_SIZE < board[i][j].l_x ||
+					current->p_x > board[i][j].l_x + (2 * TILE_SIZE) ||
+					current->p_y + (2 * TILE_SIZE) < board[i][j].l_y ||
+					current->p_y > board[i][j].l_y + (2 * TILE_SIZE))
+				{
+
+				}
+				else
+				{
+					if (j != 19 && i != 11)
+					{
+						current->l_x = board[i + 1][j].l_x;
+						current->l_y = board[i + 1][j].l_y;
+						current->p_x = board[i + 1][j + 1].l_x;
+						current->p_y = board[i + 1][j + 1].l_y;
+						found = true;
+						break;
+					}
+
+				}
+			}
+
+
+		}
+
+		if (found) {
+			break;
+		}
+	}
+}
+
 
 
 int main()
@@ -432,7 +933,7 @@ int main()
 	bool running = true;
 
 	Tile** tiles = NULL;
-	int ilosc_domino = 8;
+	int ilosc_domino = 1;
 	unsigned int length = 0;
 	int start_x = 290;
 
@@ -442,32 +943,26 @@ int main()
 	int i_dobrane = 0;
 	int ilosc_dobranych = 0;
 
+	tiles = dodawanie_domina(tiles, 0, nowy(560, 380, 620, 380, 0), &length);
+	losowanie_oczek(tiles, ilosc_domino);
+	przypisanie_grafik(tiles, ilosc_domino);
+	
+
 	int y_pos = SCREEN_HEIGHT - 200;
 	int y2_pos = SCREEN_HEIGHT - 200 + TILE_SIZE;
 	srand(time(0));
 
+
 	///Tworzenie początkowych domino
-	for (int i = 0; i < ilosc_domino; i++)
-	{
-		if (i == 0)
-		{
-			/// Środkowe domino
-			tiles = dodawanie_domina(tiles, i, nowy(SCREEN_WIDTH / 2 - TILE_SIZE, SCREEN_HEIGHT / 2 - TILE_SIZE / 2, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - TILE_SIZE / 2, 0), &length);
-		}
-		else if (i == 1)
-		{
-			tiles = dodawanie_domina(tiles, i, nowy(start_x, y_pos, start_x, y2_pos, 0), &length);
-		}
-		else
-		{
-			tiles = dodawanie_domina(tiles, i, nowy(tiles[i - 1]->l_x + 100, y_pos, tiles[i - 1]->p_x + 100, y2_pos, 0), &length);
-		}
+	
+	Player gracz;
+	
+	creating_players_domino(&gracz);
+	int current_selected_tile = 0;
 
-	}
+	Tile* placing_space = placing_domino();
+	tab_board_wys(placing_space);
 
-	losowanie_oczek(tiles, ilosc_domino);
-	przypisanie_grafik(tiles, ilosc_domino);
-	print_array(tiles, ilosc_domino);
 
 	bool button_down = false;
 	bool new_game = false;
@@ -548,6 +1043,20 @@ int main()
 
 			break;
 
+		case ALLEGRO_EVENT_MOUSE_AXES:
+
+			x = event.mouse.x;
+			y = event.mouse.y;
+
+			//Przesuwanie bloków
+			if (button_down)
+			{
+				poruszanie(gracz.domino_gracza, gracz.ilosc_domino, &event, &key_down, &mouse_x, &mouse_y, &current_selected_tile);
+
+				//poruszanie_dobrane(tiles_dobrane, ilosc_dobranych, &event, &key_down, &mouse_x, &mouse_y);
+			}
+
+			break;
 		case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
 
 			if (event.mouse.button & 1)
@@ -600,6 +1109,9 @@ int main()
 
 					}
 				}
+				
+				placing(gracz.domino_gracza[current_selected_tile], placing_space);
+				
 			}
 			if (new_game)
 			{
@@ -618,121 +1130,6 @@ int main()
 				button_pressed = false;
 				break;
 			}
-
-		case ALLEGRO_EVENT_MOUSE_AXES:
-
-			x = event.mouse.x;
-			y = event.mouse.y;
-
-			//Przesuwanie bloków
-			if (button_down)
-			{
-				for (int i = 1; i < ilosc_domino; i++)
-				{
-					collision(tiles[i], tiles, ilosc_domino, i);
-
-					if (tiles[i]->rotation_degree == 0 || tiles[i]->rotation_degree == 270)
-					{
-						if (event.mouse.x >= tiles[i]->l_x && event.mouse.x <= tiles[i]->p_x + TILE_SIZE)
-							if (event.mouse.y >= tiles[i]->l_y && event.mouse.y <= tiles[i]->p_y + TILE_SIZE)
-							{
-								tiles[i]->l_x = tiles[i]->l_x + event.mouse.x - mouse_x;
-								tiles[i]->l_y = tiles[i]->l_y + event.mouse.y - mouse_y;
-
-								tiles[i]->p_x = tiles[i]->p_x + event.mouse.x - mouse_x;
-								tiles[i]->p_y = tiles[i]->p_y + event.mouse.y - mouse_y;
-
-								mouse_x = event.mouse.x;
-								mouse_y = event.mouse.y;
-
-
-								///Obracanie domino
-								if (key_down)
-								{
-									obracanie(tiles[i]);
-									key_down = false;
-								}
-
-							}
-					}
-					else
-					{
-						if (event.mouse.x >= tiles[i]->p_x && event.mouse.x <= tiles[i]->l_x + TILE_SIZE)
-							if (event.mouse.y >= tiles[i]->p_y && event.mouse.y <= tiles[i]->l_y + TILE_SIZE)
-							{
-								tiles[i]->l_x = tiles[i]->l_x + event.mouse.x - mouse_x;
-								tiles[i]->l_y = tiles[i]->l_y + event.mouse.y - mouse_y;
-
-								tiles[i]->p_x = tiles[i]->p_x + event.mouse.x - mouse_x;
-								tiles[i]->p_y = tiles[i]->p_y + event.mouse.y - mouse_y;
-
-								mouse_x = event.mouse.x;
-								mouse_y = event.mouse.y;
-
-								///Obracanie domino
-								if (key_down)
-								{
-									obracanie(tiles[i]);
-									key_down = false;
-								}
-							}
-					}
-
-
-
-
-
-				}
-
-
-				for (int i = 0; i < ilosc_dobranych; i++)
-				{
-					if (event.mouse.x >= tiles_dobrane[i]->l_x && event.mouse.x <= tiles_dobrane[i]->p_x + TILE_SIZE)
-						if (event.mouse.y >= tiles_dobrane[i]->l_y && event.mouse.y <= tiles_dobrane[i]->p_y + TILE_SIZE)
-						{
-							tiles_dobrane[i]->l_x = tiles_dobrane[i]->l_x + event.mouse.x - mouse_x;
-							tiles_dobrane[i]->l_y = tiles_dobrane[i]->l_y + event.mouse.y - mouse_y;
-
-							tiles_dobrane[i]->p_x = tiles_dobrane[i]->p_x + event.mouse.x - mouse_x;
-							tiles_dobrane[i]->p_y = tiles_dobrane[i]->p_y + event.mouse.y - mouse_y;
-
-							mouse_x = event.mouse.x;
-							mouse_y = event.mouse.y;
-
-
-							///Obracanie domino
-							if (key_down)
-							{
-								obracanie(tiles[i]);
-								key_down = false;
-							}
-
-						}
-						else
-						{
-							if (event.mouse.x >= tiles[i]->p_x && event.mouse.x <= tiles[i]->l_x + TILE_SIZE)
-								if (event.mouse.y >= tiles[i]->p_y && event.mouse.y <= tiles[i]->l_y + TILE_SIZE)
-								{
-									tiles_dobrane[i]->l_x = tiles_dobrane[i]->l_x + event.mouse.x - mouse_x;
-									tiles_dobrane[i]->l_y = tiles_dobrane[i]->l_y + event.mouse.y - mouse_y;
-
-									tiles_dobrane[i]->p_x = tiles_dobrane[i]->p_x + event.mouse.x - mouse_x;
-									tiles_dobrane[i]->p_y = tiles_dobrane[i]->p_y + event.mouse.y - mouse_y;
-
-									mouse_x = event.mouse.x;
-									mouse_y = event.mouse.y;
-
-									///Obracanie domino
-									if (key_down)
-									{
-										obracanie(tiles[i]);
-										key_down = false;
-									}
-								}
-						}
-				}
-			}
-			break;
 
 		case ALLEGRO_EVENT_KEY_CHAR:
 		{
@@ -772,8 +1169,50 @@ int main()
 			{
 				al_clear_to_color(al_map_rgb(0, 64, 0));
 
+				wyswietlanie_domino(gracz.domino_gracza, gracz.ilosc_domino);
 				wyswietlanie_domino(tiles, ilosc_domino);
 				wyswietlanie_domino(tiles_dobrane, ilosc_dobranych);
+				al_draw_rectangle(20, 20, SCREEN_WIDTH - 60, SCREEN_HEIGHT - 220, al_map_rgb(100, 100, 100), 2);
+				wyswietlanie_lini(placing_space);
+
+				al_draw_line(20, 80, SCREEN_WIDTH - 60, 80, al_map_rgb(100, 100, 100), 2);
+				al_draw_line(20, 140, SCREEN_WIDTH - 60, 140, al_map_rgb(100, 100, 100), 2);
+				al_draw_line(20, 200, SCREEN_WIDTH - 60, 200, al_map_rgb(100, 100, 100), 2);
+				al_draw_line(20, 260, SCREEN_WIDTH - 60, 260, al_map_rgb(100, 100, 100), 2);
+				al_draw_line(20, 320, SCREEN_WIDTH - 60, 320, al_map_rgb(100, 100, 100), 2);
+				al_draw_line(20, 380, SCREEN_WIDTH - 60, 380, al_map_rgb(100, 100, 100), 2);
+				al_draw_line(20, 440, SCREEN_WIDTH - 60, 440, al_map_rgb(100, 100, 100), 2);
+				al_draw_line(20, 500, SCREEN_WIDTH - 60, 500, al_map_rgb(100, 100, 100), 2);
+				al_draw_line(20, 560, SCREEN_WIDTH - 60, 560, al_map_rgb(100, 100, 100), 2);
+				al_draw_line(20, 620, SCREEN_WIDTH - 60, 620, al_map_rgb(100, 100, 100), 2);
+				al_draw_line(20, 680, SCREEN_WIDTH - 60, 680, al_map_rgb(100, 100, 100), 2);
+
+				//PIONOWE
+				al_draw_line(80, 20, 80, SCREEN_HEIGHT - 220, al_map_rgb(100, 100, 100), 2);
+
+				al_draw_line(140, 20, 140, SCREEN_HEIGHT - 220, al_map_rgb(100, 100, 100), 2);
+				al_draw_line(200, 20, 200, SCREEN_HEIGHT - 220, al_map_rgb(100, 100, 100), 2);
+				al_draw_line(260, 20, 260, SCREEN_HEIGHT - 220, al_map_rgb(100, 100, 100), 2);
+				al_draw_line(320, 20, 320, SCREEN_HEIGHT - 220, al_map_rgb(100, 100, 100), 2);
+				al_draw_line(380, 20, 380, SCREEN_HEIGHT - 220, al_map_rgb(100, 100, 100), 2);
+
+				al_draw_line(440, 20, 440, SCREEN_HEIGHT - 220, al_map_rgb(100, 100, 100), 2);
+				al_draw_line(500, 20, 500, SCREEN_HEIGHT - 220, al_map_rgb(100, 100, 100), 2);
+				al_draw_line(560, 20, 560, SCREEN_HEIGHT - 220, al_map_rgb(100, 100, 100), 2);
+				al_draw_line(620, 20, 620, SCREEN_HEIGHT - 220, al_map_rgb(100, 100, 100), 2);
+				al_draw_line(680, 20, 680, SCREEN_HEIGHT - 220, al_map_rgb(100, 100, 100), 2);
+
+
+				al_draw_line(740, 20, 740, SCREEN_HEIGHT - 220, al_map_rgb(100, 100, 100), 2);
+				al_draw_line(800, 20, 800, SCREEN_HEIGHT - 220, al_map_rgb(100, 100, 100), 2);
+				al_draw_line(860, 20, 860, SCREEN_HEIGHT - 220, al_map_rgb(100, 100, 100), 2);
+				al_draw_line(920, 20, 920, SCREEN_HEIGHT - 220, al_map_rgb(100, 100, 100), 2);
+				al_draw_line(980, 20, 980, SCREEN_HEIGHT - 220, al_map_rgb(100, 100, 100), 2);
+
+				al_draw_line(1040, 20, 1040, SCREEN_HEIGHT - 220, al_map_rgb(100, 100, 100), 2);
+				al_draw_line(1100, 20, 1100, SCREEN_HEIGHT - 220, al_map_rgb(100, 100, 100), 2);
+				al_draw_line(1160, 20, 1160, SCREEN_HEIGHT - 220, al_map_rgb(100, 100, 100), 2);
+				al_draw_line(1220, 20, 1220, SCREEN_HEIGHT - 220, al_map_rgb(100, 100, 100), 2);
 				al_draw_filled_rectangle(0, 0, 430, 50, al_map_rgb(0, 64, 0), 10);
 				al_draw_text(font1, al_map_rgb(255, 255, 255), 10, 10, ALLEGRO_ALIGN_LEFT, "Dobierz kafelki tutaj");
 
@@ -791,7 +1230,7 @@ int main()
 
 	for (int i = 0; i < ilosc_domino; i++)
 	{
-		free(tiles[i]);
+		free(gracz.domino_gracza[i]);
 	}
 	free(tiles);
 
