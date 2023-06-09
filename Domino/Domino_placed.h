@@ -29,7 +29,7 @@ void tab_board_wys(Tiles_Placed board[12][20]);
 
 void checking_placement(Tiles_Placed board[12][20]);
 
-void placing(Tile* current, Tiles_Placed board[][20]);
+void placing(Tile* current, Tiles_Placed board[][20], Player* gracz, int* currently_selected_index);
 
 
 
