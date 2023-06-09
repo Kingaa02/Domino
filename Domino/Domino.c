@@ -13,7 +13,7 @@ void losowanie_oczek(struct Tile** tiles, int ilosc_domino) {
 
 void losowanie_oczek_dobrane(struct Tile** tiles, int ilosc_domino) {
 
-
+	printf("ilosc dom %d", ilosc_domino);
 	tiles[ilosc_domino]->ilosc_oczek_lewo = rand() % 7;
 	tiles[ilosc_domino]->ilosc_oczek_prawo = rand() % 7;
 
@@ -143,6 +143,7 @@ void wyswietlanie_domino(Tile** tiles, int ilosc_domino)
 		}
 		else
 		{
+
 			al_draw_bitmap(tiles[i]->lewo, tiles[i]->l_x, tiles[i]->l_y, 0);
 			al_draw_bitmap(tiles[i]->prawo, tiles[i]->p_x, tiles[i]->p_y, 0);
 		}
@@ -160,6 +161,12 @@ Tile* nowy(int l_x, int l_y, int p_x, int p_y, float rotation_degree)
 		n->l_y = l_y;
 		n->p_x = p_x;
 		n->p_y = p_y;
+		n->start_l_x = l_x;
+		n->start_l_y = l_y;
+		n->start_p_x = p_x;
+		n->start_p_y = p_y;
+		n->moveable = true;
+		n->is_placed = false;
 		n->rotation_degree = rotation_degree;
 		return n;
 	}
@@ -335,7 +342,7 @@ int collision(Tile* domino_r, Tile** tiles, int ilosc_domino, int domino_i)
 			else if (domino_r->rotation_degree == 270)
 			{
 				if (domino_r->l_x + (2 * TILE_SIZE) < tiles[i]->l_x || // prawo z lewy 
-					domino_r->l_x > tiles[i]->l_x + TILE_SIZE || // lewo z prawym
+					domino_r->l_x > tiles[i]->l_x + TILE_SIZE ||		// lewo z prawym
 					domino_r->l_y + (2 * TILE_SIZE) < tiles[i]->l_y ||  // dó³ z gór¹
 					domino_r->l_y > tiles[i]->l_y + (2 * TILE_SIZE) ||  // góra z do³em
 					domino_r->p_x + TILE_SIZE < tiles[i]->p_x ||
@@ -415,180 +422,73 @@ void poruszanie(Tile** tiles, int ilosc_domino, ALLEGRO_EVENT* event, bool* key_
 {
 	for (int i = 0; i < ilosc_domino; i++)
 	{
-
-		if (tiles[i]->rotation_degree == 0 || tiles[i]->rotation_degree == 270)
+		if (tiles[i]->moveable == true)
 		{
+			if (tiles[i]->rotation_degree == 0 || tiles[i]->rotation_degree == 270)
+			{
 
-			if (event->mouse.x >= tiles[i]->l_x && event->mouse.x <= tiles[i]->p_x + TILE_SIZE)
-				if (event->mouse.y >= tiles[i]->l_y && event->mouse.y <= tiles[i]->p_y + TILE_SIZE)
+				if (event->mouse.x >= tiles[i]->l_x && event->mouse.x <= tiles[i]->p_x + TILE_SIZE)
+					if (event->mouse.y >= tiles[i]->l_y && event->mouse.y <= tiles[i]->p_y + TILE_SIZE)
+					{
+						*current = i;
+
+
+						tiles[i]->l_x = tiles[i]->l_x + event->mouse.x - *mouse_x;
+						tiles[i]->l_y = tiles[i]->l_y + event->mouse.y - *mouse_y;
+
+						tiles[i]->p_x = tiles[i]->p_x + event->mouse.x - *mouse_x;
+						tiles[i]->p_y = tiles[i]->p_y + event->mouse.y - *mouse_y;
+
+						*mouse_x = event->mouse.x;
+						*mouse_y = event->mouse.y;
+
+						//collision(current_selected_tile.l_x, current_selected_tile.l_y, tiles[i]->l_x, tiles[i]->l_y, 60, 120);
+						//printf("%d", current_selected_tile.ilosc_oczek_lewo);
+						//current_selected_tile = tiles[i];
+
+						///Obracanie domino
+						if (*key_down)
+						{
+							obracanie(tiles[i]);
+							*key_down = false;
+
+							printf("ilosc oczek lewo %d \n", tiles[i]->ilosc_oczek_lewo);
+							printf("l_x %d \n", tiles[i]->l_x);
+							printf("l_y %d \n", tiles[i]->l_y);
+							printf("p_x %d \n", tiles[i]->p_x);
+							printf("p_y %d \n", tiles[i]->p_y);
+						}
+
+					}
+			}
+			else
+			{
+				tiles[i]->l_x = tiles[i]->l_x + event->mouse.x - *mouse_x;
+				tiles[i]->l_y = tiles[i]->l_y + event->mouse.y - *mouse_y;
+
+				tiles[i]->p_x = tiles[i]->p_x + event->mouse.x - *mouse_x;
+				tiles[i]->p_y = tiles[i]->p_y + event->mouse.y - *mouse_y;
+
+				*mouse_x = event->mouse.x;
+				*mouse_y = event->mouse.y;
+
+				if (*key_down)
 				{
-					*current = i;
+					obracanie(tiles[i]);
+					*key_down = false;
 
-					int collision_check = collision(tiles[i], tiles, ilosc_domino, i);
-					if (collision_check == 0) //prawa sciana z lew¹
-					{
-						tiles[i]->l_x = tiles[i]->l_x - event->mouse.x + *mouse_x - 1;
-						tiles[i]->l_y = tiles[i]->l_y + event->mouse.y - *mouse_y;
-
-						tiles[i]->p_x = tiles[i]->p_x - event->mouse.x + *mouse_x - 1;
-						tiles[i]->p_y = tiles[i]->p_y + event->mouse.y - *mouse_y;
-
-
-						*mouse_x = event->mouse.x;
-						*mouse_y = event->mouse.y;
-
-					}
-					else if (collision_check == 1) //lewa sciana z praw¹
-					{
-						tiles[i]->l_x = tiles[i]->l_x + event->mouse.x - *mouse_x + 1;
-						tiles[i]->l_y = tiles[i]->l_y + event->mouse.y - *mouse_y;
-
-						tiles[i]->p_x = tiles[i]->p_x + event->mouse.x - *mouse_x + 1;
-						tiles[i]->p_y = tiles[i]->p_y + event->mouse.y - *mouse_y;
-
-
-						*mouse_x = event->mouse.x;
-						*mouse_y = event->mouse.y;
-					}
-					else if (collision_check == 2) // gorna œciana z doln¹ 
-					{
-
-						tiles[i]->l_x = tiles[i]->l_x + event->mouse.x - *mouse_x;
-						tiles[i]->l_y = tiles[i]->l_y + event->mouse.y - *mouse_y + 1;
-
-						tiles[i]->p_x = tiles[i]->p_x + event->mouse.x - *mouse_x;
-						tiles[i]->p_y = tiles[i]->p_y + event->mouse.y - *mouse_y + 1;
-
-						*mouse_x = event->mouse.x;
-						*mouse_y = event->mouse.y;
-					}
-					else if (collision_check == 3) // dolna z gorn¹
-					{
-						tiles[i]->l_x = tiles[i]->l_x + event->mouse.x - *mouse_x;
-						tiles[i]->l_y = tiles[i]->l_y - event->mouse.y + *mouse_y - 1;
-
-						tiles[i]->p_x = tiles[i]->p_x + event->mouse.x - *mouse_x;
-						tiles[i]->p_y = tiles[i]->p_y - event->mouse.y + *mouse_y - 1;
-
-						*mouse_x = event->mouse.x;
-						*mouse_y = event->mouse.y;
-
-					}
-					else
-					{
-						tiles[i]->l_x = tiles[i]->l_x + event->mouse.x - *mouse_x;
-						tiles[i]->l_y = tiles[i]->l_y + event->mouse.y - *mouse_y;
-
-						tiles[i]->p_x = tiles[i]->p_x + event->mouse.x - *mouse_x;
-						tiles[i]->p_y = tiles[i]->p_y + event->mouse.y - *mouse_y;
-
-						*mouse_x = event->mouse.x;
-						*mouse_y = event->mouse.y;
-					}
-
-
-
-
-
-					//collision(current_selected_tile.l_x, current_selected_tile.l_y, tiles[i]->l_x, tiles[i]->l_y, 60, 120);
-					//printf("%d", current_selected_tile.ilosc_oczek_lewo);
-					//current_selected_tile = tiles[i];
-
-					///Obracanie domino
-					if (*key_down)
-					{
-						obracanie(tiles[i]);
-						*key_down = false;
-
-						printf("ilosc oczek lewo %d \n", tiles[i]->ilosc_oczek_lewo);
-						printf("l_x %d \n", tiles[i]->l_x);
-						printf("l_y %d \n", tiles[i]->l_y);
-						printf("p_x %d \n", tiles[i]->p_x);
-						printf("p_y %d \n", tiles[i]->p_y);
-					}
-
+					printf("ilosc oczek lewo %d \n", tiles[i]->ilosc_oczek_lewo);
+					printf("l_x %d \n", tiles[i]->l_x);
+					printf("l_y %d \n", tiles[i]->l_y);
+					printf("p_x %d \n", tiles[i]->p_x);
+					printf("p_y %d \n", tiles[i]->p_y);
 				}
+
+			}
+
+
 		}
-		else
-		{
-
-			if (event->mouse.x >= tiles[i]->p_x && event->mouse.x <= tiles[i]->l_x + TILE_SIZE)
-				if (event->mouse.y >= tiles[i]->p_y && event->mouse.y <= tiles[i]->l_y + TILE_SIZE)
-				{
-					*current = i;
-					int collision_check = collision(tiles[i], tiles, ilosc_domino, i);
-					if (collision_check == 0) //prawa sciana z lew¹
-					{
-						tiles[i]->l_x = tiles[i]->l_x - event->mouse.x + *mouse_x - 1;
-						tiles[i]->l_y = tiles[i]->l_y + event->mouse.y - *mouse_y;
-
-						tiles[i]->p_x = tiles[i]->p_x - event->mouse.x + *mouse_x - 1;
-						tiles[i]->p_y = tiles[i]->p_y + event->mouse.y - *mouse_y;
-
-
-						*mouse_x = event->mouse.x;
-						*mouse_y = event->mouse.y;
-					}
-					else if (collision_check == 1) //lewa sciana z praw¹
-					{
-						tiles[i]->l_x = tiles[i]->l_x + event->mouse.x - *mouse_x + 1;
-						tiles[i]->l_y = tiles[i]->l_y + event->mouse.y - *mouse_y;
-
-						tiles[i]->p_x = tiles[i]->p_x + event->mouse.x - *mouse_x + 1;
-						tiles[i]->p_y = tiles[i]->p_y + event->mouse.y - *mouse_y;
-
-
-						*mouse_x = event->mouse.x;
-						*mouse_y = event->mouse.y;
-					}
-					else if (collision_check == 2) // gorna œciana z doln¹ 
-					{
-
-						tiles[i]->l_x = tiles[i]->l_x + event->mouse.x - *mouse_x;
-						tiles[i]->l_y = tiles[i]->l_y + event->mouse.y - *mouse_y + 1;
-
-						tiles[i]->p_x = tiles[i]->p_x + event->mouse.x - *mouse_x;
-						tiles[i]->p_y = tiles[i]->p_y + event->mouse.y - *mouse_y + 1;
-
-						*mouse_x = event->mouse.x;
-						*mouse_y = event->mouse.y;
-					}
-					else if (collision_check == 3) // dolna z gorn¹
-					{
-						tiles[i]->l_x = tiles[i]->l_x + event->mouse.x - *mouse_x;
-						tiles[i]->l_y = tiles[i]->l_y - event->mouse.y + *mouse_y - 1;
-
-						tiles[i]->p_x = tiles[i]->p_x + event->mouse.x - *mouse_x;
-						tiles[i]->p_y = tiles[i]->p_y - event->mouse.y + *mouse_y - 1;
-
-						*mouse_x = event->mouse.x;
-						*mouse_y = event->mouse.y;
-
-					}
-					else
-					{
-						tiles[i]->l_x = tiles[i]->l_x + event->mouse.x - *mouse_x;
-						tiles[i]->l_y = tiles[i]->l_y + event->mouse.y - *mouse_y;
-
-						tiles[i]->p_x = tiles[i]->p_x + event->mouse.x - *mouse_x;
-						tiles[i]->p_y = tiles[i]->p_y + event->mouse.y - *mouse_y;
-
-						*mouse_x = event->mouse.x;
-						*mouse_y = event->mouse.y;
-					}
-					if (*key_down)
-					{
-						obracanie(tiles[i]);
-						*key_down = false;
-
-						printf("ilosc oczek lewo %d \n", tiles[i]->ilosc_oczek_lewo);
-						printf("l_x %d \n", tiles[i]->l_x);
-						printf("l_y %d \n", tiles[i]->l_y);
-						printf("p_x %d \n", tiles[i]->p_x);
-						printf("p_y %d \n", tiles[i]->p_y);
-					}
-				}
-		}
-
 	}
 }
+
+

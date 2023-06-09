@@ -6,7 +6,7 @@ void creating_players_domino(Player* gracz)
 	gracz->ilosc_domino = 8;
 	gracz->domino_gracza = NULL;
 	gracz->length = 0;
-	gracz->start_x = 290;
+	gracz->start_x = 60;
 	int y_pos = SCREEN_HEIGHT - 200;
 	int y2_pos = SCREEN_HEIGHT - 200 + TILE_SIZE;
 
@@ -25,4 +25,14 @@ void creating_players_domino(Player* gracz)
 	losowanie_oczek(gracz->domino_gracza, gracz->ilosc_domino);
 	przypisanie_grafik(gracz->domino_gracza, gracz->ilosc_domino);
 	print_array(gracz->domino_gracza, gracz->ilosc_domino);
+}
+
+void dobieranie(Player* gracz)
+{
+	int y_pos = SCREEN_HEIGHT - 200;
+	int y2_pos = SCREEN_HEIGHT - 200 + TILE_SIZE;
+	gracz->domino_gracza = dodawanie_domina(gracz->domino_gracza, gracz->ilosc_domino, nowy(gracz->domino_gracza[gracz->ilosc_domino - 1]->l_x + 100, y_pos, gracz->domino_gracza[gracz->ilosc_domino - 1]->l_x + 100, y2_pos, 0), &gracz->length);
+	losowanie_oczek_dobrane(gracz->domino_gracza, gracz->ilosc_domino);
+	przypisanie_grafik_dobrane(gracz->domino_gracza, gracz->ilosc_domino);
+	gracz->ilosc_domino += 1;
 }

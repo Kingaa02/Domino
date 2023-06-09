@@ -53,7 +53,6 @@ int main()
 	al_set_sample_instance_playmode(songInstance, ALLEGRO_PLAYMODE_LOOP);
 	al_attach_sample_instance_to_mixer(songInstance, al_get_default_mixer());
 
-	//char tile_a[11] = "tile_0.png", tile_b[11] = "tile_0.png"; //tablice przechowuj¹ce nazwy plików obrazów
 
 	//KURSOR
 	ALLEGRO_BITMAP* cursorImage = al_load_bitmap("cursor.png");
@@ -120,7 +119,7 @@ int main()
 	creating_players_domino(&gracz);
 	int current_selected_tile = 0;
 
-	Tile* placing_space = placing_domino();
+	Tile* placing_space = placing_domino(tiles[0]);
 	tab_board_wys(placing_space);
 
 
@@ -270,7 +269,7 @@ int main()
 					}
 				}
 				
-				placing(gracz.domino_gracza[current_selected_tile], placing_space);
+				placing(gracz.domino_gracza[current_selected_tile], placing_space, gracz, &current_selected_tile);
 				
 			}
 			if (new_game)
@@ -279,12 +278,7 @@ int main()
 					event.mouse.y >= 0 && event.mouse.y <= 50) {
 					// Przycisk został kliknięty
 					printf("Przycisk dziala");
-					tiles_dobrane = dodawanie_domina(tiles_dobrane, i_dobrane, nowy(80, 80, 80, 140, 0), &length_dobrane);
-
-					losowanie_oczek_dobrane(tiles_dobrane, ilosc_dobranych);
-					przypisanie_grafik_dobrane(tiles_dobrane, ilosc_dobranych);
-					i_dobrane++;
-					ilosc_dobranych++;
+					dobieranie(&gracz);
 					break;
 				}
 				button_pressed = false;

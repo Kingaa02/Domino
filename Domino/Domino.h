@@ -20,6 +20,12 @@ struct Tile {
 
 	int p_x, p_y;
 	int l_x, l_y;
+
+	int start_p_x, start_p_y;
+	int start_l_x, start_l_y;
+
+	bool moveable;
+	bool is_placed;
 	int ilosc_oczek_lewo, ilosc_oczek_prawo;
 	float rotation_degree;
 	ALLEGRO_BITMAP* lewo;
@@ -59,3 +65,6 @@ void obracanie(Tile* current);
 
 /// Poruszanie blokami przy pomocy myszki
 void poruszanie(Tile** tiles, int ilosc_domino, ALLEGRO_EVENT* event, bool* key_down, int* mouse_x, int* mouse_y, int* current);
+
+void dobieranie(Tile** tiles);
+

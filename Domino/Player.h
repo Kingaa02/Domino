@@ -17,3 +17,5 @@ typedef struct Player Player;
 /// Tworzenie nowego gracza
 void creating_players_domino(Player* gracz);
 
+/// Dobieranie nowego domina
+void dobieranie(Player* gracz);
