@@ -31,5 +31,7 @@ void checking_placement(Tiles_Placed board[12][20]);
 
 void placing(Tile* current, Tiles_Placed board[][20], Player* gracz, int* currently_selected_index);
 
+void przesuwanie_do_lewej(Player* gracz, int* current);
+
 
 
