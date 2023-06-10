@@ -1,9 +1,11 @@
 #pragma once
 #include"Player.h"
 
+/// Funkcja do tworzenia nowego gracza i jego kafelków
 void creating_players_domino(Player* gracz)
 {
-	gracz->ilosc_domino = 8;
+	gracz->ilosc_domino = 2;
+	gracz->ilosc_polozonych = 0;
 	gracz->domino_gracza = NULL;
 	gracz->length = 0;
 	gracz->start_x = 60;
@@ -24,9 +26,9 @@ void creating_players_domino(Player* gracz)
 	}
 	losowanie_oczek(gracz->domino_gracza, gracz->ilosc_domino);
 	przypisanie_grafik(gracz->domino_gracza, gracz->ilosc_domino);
-	print_array(gracz->domino_gracza, gracz->ilosc_domino);
 }
 
+/// Funkcja dobieraj¹ca nowe dominno do rêki gracza
 void dobieranie(Player* gracz)
 {
 	int y_pos = SCREEN_HEIGHT - 200;

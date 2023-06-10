@@ -18,8 +18,11 @@
 typedef struct Tile Tile;
 struct Tile {
 
+	/// Wspó³rzêdne 
 	int p_x, p_y;
 	int l_x, l_y;
+
+	int original_index;
 
 	int start_p_x, start_p_y;
 	int start_l_x, start_l_y;
@@ -33,7 +36,7 @@ struct Tile {
 
 };
 
-//losowanie liczby oczek klocka startowegoa
+///losowanie liczby oczek klocka startowegoa
 void losowanie_oczek(struct Tile** tiles, int ilosc_domino);
 
 void losowanie_oczek_dobrane(struct Tile** tiles, int ilosc_domino);
@@ -65,6 +68,3 @@ void obracanie(Tile* current);
 
 /// Poruszanie blokami przy pomocy myszki
 void poruszanie(Tile** tiles, int ilosc_domino, ALLEGRO_EVENT* event, bool* key_down, int* mouse_x, int* mouse_y, int* current);
-
-void dobieranie(Tile** tiles);
-

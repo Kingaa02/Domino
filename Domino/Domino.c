@@ -176,7 +176,7 @@ Tile* nowy(int l_x, int l_y, int p_x, int p_y, float rotation_degree)
 /// Powiêkszanie tablicy i dodawanie nowych domin do tablicy
 Tile** dodawanie_domina(Tile** tab, int index, Tile* domino, unsigned int* length)
 {
-	const unsigned int powiekszenie = 10;
+	const unsigned int powiekszenie = 64;
 
 	if (index >= *length)
 	{
@@ -190,32 +190,14 @@ Tile** dodawanie_domina(Tile** tab, int index, Tile* domino, unsigned int* lengt
 	return tab;
 }
 
-/// Wyœwietlanie zawartoœci tablicy z domino / Sprawdzanie wartoœci
-void print_array(Tile** array, const unsigned int number_of_values)
-{
-	if (array) {
-		printf("W tablicy znajduje siê %u wartoœci.\n", number_of_values);
-		for (int i = 0; i < number_of_values; i++)
-		{
-			printf("l_x %d \n", array[i]->l_x);
-			printf("l_y %d \n", array[i]->l_y);
-			printf("p_x %d \n", array[i]->p_x);
-			printf("p_y %d \n", array[i]->p_y);
-			printf("ilosc_oczek_lewo %d \n", array[i]->ilosc_oczek_lewo);
-			array[i]->lewo;
-
-		}
-		puts("");
-	}
-}
-
-
+/// Kolizja miêdzy blokami domina
 int collision(Tile* domino_r, Tile** tiles, int ilosc_domino, int domino_i)
 {
-	int prawy_z_lewym = 0; // to samo samo przesuwanie
+	/// Strony którymi styjak¹ siê domina
+	int prawy_z_lewym = 0;
 	int lewy_z_prawym = 1;
 	int gora_z_dolem = 2;
-	int dol_z_gora = 3; // to samo przesuwanie
+	int dol_z_gora = 3; 
 
 	for (int i = 0; i < ilosc_domino; i++)
 	{
@@ -386,7 +368,7 @@ int collision(Tile* domino_r, Tile** tiles, int ilosc_domino, int domino_i)
 
 
 }
-
+/// Funkcja do obracania domina
 void obracanie(Tile* current)
 {
 	current->rotation_degree += 90;
@@ -415,9 +397,9 @@ void obracanie(Tile* current)
 
 
 }
-
-
-
+/// Funkcja do poruszania domina 
+/// Current - indeks w tablicy obecnie ruszanego elemntu
+/// key_down - sprawdzenie czy obróciæ domino
 void poruszanie(Tile** tiles, int ilosc_domino, ALLEGRO_EVENT* event, bool* key_down, int* mouse_x, int* mouse_y, int* current)
 {
 	for (int i = 0; i < ilosc_domino; i++)
@@ -442,27 +424,20 @@ void poruszanie(Tile** tiles, int ilosc_domino, ALLEGRO_EVENT* event, bool* key_
 						*mouse_x = event->mouse.x;
 						*mouse_y = event->mouse.y;
 
-						//collision(current_selected_tile.l_x, current_selected_tile.l_y, tiles[i]->l_x, tiles[i]->l_y, 60, 120);
-						//printf("%d", current_selected_tile.ilosc_oczek_lewo);
-						//current_selected_tile = tiles[i];
-
 						///Obracanie domino
 						if (*key_down)
 						{
 							obracanie(tiles[i]);
 							*key_down = false;
 
-							printf("ilosc oczek lewo %d \n", tiles[i]->ilosc_oczek_lewo);
-							printf("l_x %d \n", tiles[i]->l_x);
-							printf("l_y %d \n", tiles[i]->l_y);
-							printf("p_x %d \n", tiles[i]->p_x);
-							printf("p_y %d \n", tiles[i]->p_y);
 						}
 
 					}
 			}
 			else
 			{
+				*current = i;
+
 				tiles[i]->l_x = tiles[i]->l_x + event->mouse.x - *mouse_x;
 				tiles[i]->l_y = tiles[i]->l_y + event->mouse.y - *mouse_y;
 
@@ -476,12 +451,6 @@ void poruszanie(Tile** tiles, int ilosc_domino, ALLEGRO_EVENT* event, bool* key_
 				{
 					obracanie(tiles[i]);
 					*key_down = false;
-
-					printf("ilosc oczek lewo %d \n", tiles[i]->ilosc_oczek_lewo);
-					printf("l_x %d \n", tiles[i]->l_x);
-					printf("l_y %d \n", tiles[i]->l_y);
-					printf("p_x %d \n", tiles[i]->p_x);
-					printf("p_y %d \n", tiles[i]->p_y);
 				}
 
 			}
