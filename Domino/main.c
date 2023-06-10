@@ -89,6 +89,8 @@ int main()
 	bool zasady = false;
 	bool menu = true;
 	bool running = true;
+	bool wygrana = false;
+	bool game_over = false;
 
 	bool button_down = false;
 	bool new_game = false;
@@ -212,6 +214,31 @@ int main()
 			if (event.mouse.button & 1)
 			{
 				button_down = false;
+
+				///Ekran wygranej
+				if (wygrana)
+				{
+					///Wygrana gracza 1
+					if (gracz_1.ilosc_polozonych == gracz_1.ilosc_domino)
+					{
+						al_clear_to_color(al_map_rgb(0, 64, 0));
+						al_draw_text(font2, al_map_rgb(255, 255, 255), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, ALLEGRO_ALIGN_CENTER, "Wygrywa gracz 1!");
+						al_draw_text(font1, al_map_rgb(255, 255, 255), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 400, ALLEGRO_ALIGN_CENTRE, "Wyjscie");
+					}
+					///Wygrana gracza 2
+					else if (gracz_2.ilosc_polozonych == gracz_2.ilosc_domino)
+					{
+						al_clear_to_color(al_map_rgb(0, 64, 0));
+						al_draw_text(font2, al_map_rgb(255, 255, 255), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, ALLEGRO_ALIGN_CENTER, "Wygrywa gracz 2!");
+						al_draw_text(font1, al_map_rgb(255, 255, 255), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 400, ALLEGRO_ALIGN_CENTRE, "Wyjscie");
+					}
+					///Wyjscie po wygranej
+					if (event.mouse.x > SCREEN_WIDTH / 2 - 70 && event.mouse.x < SCREEN_WIDTH / 2 + 70 && event.mouse.y < SCREEN_HEIGHT / 2 + 430 && event.mouse.y > SCREEN_HEIGHT / 2 + 400)
+					{
+						running = false;
+					}
+				}
+
 				/// Nowa gra
 				if (!zasady && !new_game)
 				{
@@ -222,7 +249,7 @@ int main()
 	
 					}
 
-					//Wyjście
+					/// Wyjście
 					if (event.mouse.x > SCREEN_WIDTH / 2 - 70 && event.mouse.x < SCREEN_WIDTH / 2 + 70 && event.mouse.y > SCREEN_HEIGHT / 2 + 90 && event.mouse.y < SCREEN_HEIGHT / 2 + 110)
 					{
 						menu = false;
@@ -249,7 +276,7 @@ int main()
 					}
 
 				}
-				else if (zasady)
+				else if (zasady || wygrana)
 				{
 					//powrót
 					if (event.mouse.x > SCREEN_WIDTH / 2 - 70 && event.mouse.x < SCREEN_WIDTH / 2 + 70 && event.mouse.y < SCREEN_HEIGHT / 2 + 430 && event.mouse.y > SCREEN_HEIGHT / 2 + 400)
@@ -336,14 +363,13 @@ int main()
 				{
 					if (gracz_1.ilosc_polozonych == gracz_1.ilosc_domino)
 					{
-						al_clear_to_color(al_map_rgb(0, 64, 0));
-						//wygrywa gracz 1
+						wygrana = true;
+						new_game = false;
 					}
 					else if (gracz_2.ilosc_polozonych == gracz_2.ilosc_domino)
 					{
-						al_clear_to_color(al_map_rgb(0, 64, 0));
-						// wygrywa gracz 2
-						
+						wygrana = true;
+						new_game = false;
 					}
 				}
 
